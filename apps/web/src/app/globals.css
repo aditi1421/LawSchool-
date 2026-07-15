@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+@theme {
+  /* Paper & ink — restrained legal palette */
+  --color-paper: #f6f4ee;
+  --color-panel: #fdfcf8;
+  --color-panel-2: #f1eee5;
+  --color-ink: #211e19;
+  --color-ink-soft: #4c473e;
+  --color-ink-muted: #7c766a;
+  --color-rule: #ddd7c8;
+  --color-rule-soft: #e9e4d8;
+
+  /* Deep judicial green accent */
+  --color-accent: #1c5741;
+  --color-accent-deep: #133e2e;
+  --color-accent-wash: #e6efe9;
+
+  /* Oxblood — destructive / respondent side */
+  --color-oxblood: #722428;
+  --color-oxblood-wash: #f4e7e6;
+
+  /* Verify / OCR amber */
+  --color-verify: #8a5a06;
+  --color-verify-wash: #f8edd4;
+
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-public-sans), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+
+  --shadow-card: 0 1px 2px rgb(33 30 25 / 0.06), 0 1px 3px rgb(33 30 25 / 0.08);
+  --shadow-lift: 0 2px 6px rgb(33 30 25 / 0.08), 0 8px 24px rgb(33 30 25 / 0.10);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "kern", "liga";
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgb(28 87 65 / 0.18);
+}
+
+/* Pulse when the PDF viewer jumps to a cited page */
+@keyframes cite-pulse {
+  0% {
+    outline-color: rgb(28 87 65 / 0.9);
+    box-shadow: 0 0 0 6px rgb(28 87 65 / 0.28);
+  }
+  100% {
+    outline-color: rgb(28 87 65 / 0);
+    box-shadow: 0 0 0 6px rgb(28 87 65 / 0);
+  }
+}
+
+.cite-pulse {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  animation: cite-pulse 2.4s ease-out 1;
+}
+
+/* The cited paragraph's text, marked inside the PDF text layer. The text
+   layer normally renders transparent glyphs over the canvas, so the mark
+   must paint its own background but keep the glyphs invisible. */
+.react-pdf__Page__textContent mark.cite-mark {
+  background: rgb(28 87 65 / 0.22);
+  color: transparent;
+  border-radius: 1px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Subtle progress shimmer for the long artifact-generation call */
+@keyframes analyzing-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+.analyzing-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.analyzing-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(28 87 65 / 0.5),
+    transparent
+  );
+  animation: analyzing-sweep 1.6s ease-in-out infinite;
+}
+
+/* Thin, unobtrusive scrollbars for the dense panes */
+.pane-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-rule) transparent;
+}
