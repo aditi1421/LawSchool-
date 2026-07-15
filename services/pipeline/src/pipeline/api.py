@@ -409,11 +409,12 @@ def create_draft(matter_id: str, req: GenerateDraftRequest, background: Backgrou
     if doc_type in COMPOSED_TYPES and store.load_artifacts(matter_id) is None:
         # The List of Dates is a rendering of the verified chronology, never a
         # fresh extraction — without artifacts there is nothing to render.
+        label = "An SLP" if doc_type is DraftType.SLP else "A synopsis & list of dates"
         raise HTTPException(
             status_code=422,
             detail=(
-                f"A {doc_type.value.replace('_', ' ')} is assembled from the verified "
-                "chronology — generate the case brief for this matter first."
+                f"{label} is assembled from the verified chronology — "
+                "generate the case brief for this matter first."
             ),
         )
     if req.synopsis_draft_id is not None:
