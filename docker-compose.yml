@@ -1,0 +1,46 @@
+# Local dev stack. Mirrors the managed production topology: Postgres with
+# pgvector for matters + chunks + embeddings, MinIO standing in for the
+# S3-compatible object store that holds case-file PDFs.
+#
+# Production: managed Postgres and object storage in an India region
+# (ap-south-1 / Mumbai) — case files are privileged and DPDP Act 2023 applies.
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: lawschool-db
+    environment:
+      POSTGRES_USER: lawschool
+      POSTGRES_PASSWORD: lawschool
+      POSTGRES_DB: lawschool
+    ports:
+      - "5433:5432"   # 5433 to avoid clashing with a local Postgres install
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lawschool -d lawschool"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  storage:
+    image: minio/minio:latest
+    container_name: lawschool-storage
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: lawschool
+      MINIO_ROOT_PASSWORD: lawschool123
+    ports:
+      - "9000:9000"
+      - "9001:9001"   # console
+    volumes:
+      - storage-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  db-data:
+  storage-data:
