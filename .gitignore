@@ -1,0 +1,27 @@
+# deps / build
+node_modules/
+.next/
+out/
+dist/
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# case files & gold-set documents — privileged data, never committed
+data/
+evals/gold/files/
+uploads/
+
+# local notes & design scratch
+notes/
+
+# os
+.DS_Store
+.gstack/
