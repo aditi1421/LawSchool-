@@ -12,6 +12,7 @@ Claims supported only by low-confidence OCR pages are kept but downgraded.
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
+from pipeline.artifacts.fidelity import FidelityViolation, validate_fidelity
 from pipeline.artifacts.prompts import MATTER_GUIDANCE, SYSTEM_PROMPT
 from pipeline.llm import ClaudeLLM, StructuredLLM, get_llm
 from pipeline.models import Chunk, Citation, MatterArtifacts
@@ -148,8 +149,16 @@ def generate_artifacts(
     matter_id: str,
     chunks: list[Chunk],
     model: ArtifactModel,
-) -> tuple[MatterArtifacts, list[GroundingViolation]]:
-    """Run the agent over a matter's chunks and enforce grounding."""
+) -> tuple[MatterArtifacts, list[GroundingViolation | FidelityViolation]]:
+    """Run the agent over a matter's chunks and enforce the honesty rules.
+
+    Two passes, because they answer different questions:
+      validate_grounding  — does this citation resolve to a real page?
+      validate_fidelity   — do the dates and amounts asserted actually appear
+                            on it?
+    Grounding alone passed a chronology that cited the right paragraph and
+    recorded 12.03.2019 as the year 1203. See artifacts/fidelity.py.
+    """
     system = f"{SYSTEM_PROMPT}\n\n{MATTER_GUIDANCE}"
     user = (
         f"Matter ID: {matter_id}\n\n"
@@ -157,4 +166,6 @@ def generate_artifacts(
     )
     raw = model.generate(system, user)
     raw = raw.model_copy(update={"matter_id": matter_id})
-    return validate_grounding(raw, chunks)
+    grounded, grounding_violations = validate_grounding(raw, chunks)
+    clean, fidelity_violations = validate_fidelity(grounded, chunks)
+    return clean, [*grounding_violations, *fidelity_violations]
