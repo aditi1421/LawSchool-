@@ -72,11 +72,33 @@ def default_ocr_engine() -> OcrEngine | None:
         return None
 
 
+class UnreadablePdf(ValueError):
+    """The file could not be opened as a PDF (corrupt, truncated, or encrypted)."""
+
+
 def extract_pages(pdf_path: Path, ocr: OcrEngine | None = None) -> list[PageExtract]:
-    """Extract every page of a PDF with method + confidence + language."""
+    """Extract every page of a PDF with method + confidence + language.
+
+    Raises UnreadablePdf with a human-readable reason when the file cannot be
+    opened — callers surface this to the user rather than 500-ing.
+    """
     pages: list[PageExtract] = []
-    with fitz.open(pdf_path) as doc:
+    try:
+        doc = fitz.open(pdf_path)
+    except Exception as exc:
+        raise UnreadablePdf(
+            f"Could not open {pdf_path.name} as a PDF — the file may be corrupted "
+            f"or incomplete."
+        ) from exc
+    with doc:
+        if doc.needs_pass:
+            raise UnreadablePdf(
+                f"{pdf_path.name} is password-protected. Remove the password and "
+                f"upload again."
+            )
         page_count = doc.page_count
+        if page_count == 0:
+            raise UnreadablePdf(f"{pdf_path.name} contains no pages.")
         texts = [doc[i].get_text().strip() for i in range(page_count)]
 
     for i, text in enumerate(texts):

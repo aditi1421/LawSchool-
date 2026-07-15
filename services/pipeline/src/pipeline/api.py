@@ -1,25 +1,59 @@
 """FastAPI entrypoint for the lawschool pipeline service."""
 
+import logging
 import os
+import threading
 from datetime import date
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Response, UploadFile
-from fastapi.responses import FileResponse
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Request, Response, UploadFile
+from fastapi.concurrency import run_in_threadpool
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 
 from pipeline.artifacts.generate import AnthropicArtifactModel
 from pipeline.export import artifacts_to_docx
+from pipeline.ingest.extract import UnreadablePdf
 from pipeline.ingest.matter import DocumentRecord, MatterManifest, MatterStore
 from pipeline.models import MatterArtifacts
 from pipeline.query import AnthropicQueryModel, GroundedAnswer, answer_question
 from pipeline.service import load_artifacts, retrieve, run_artifacts
 
+logger = logging.getLogger(__name__)
+
 app = FastAPI(title="lawschool pipeline")
 
 # Dev CORS — the Next.js app on :3000 talks to this service on :8000.
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
+from starlette.middleware.base import BaseHTTPMiddleware  # noqa: E402
 
+class CatchAllErrors(BaseHTTPMiddleware):
+    """Turn unhandled exceptions into JSON 500s *inside* the CORS layer.
+
+    Starlette's default 500 comes from ServerErrorMiddleware, which is the
+    outermost layer — outside CORSMiddleware. Such a response carries no CORS
+    headers, so a browser reports a server crash as an opaque network failure
+    ("Failed to fetch") and the UI blames the connection instead of showing the
+    real error. An `@app.exception_handler(Exception)` does not fix this: that
+    handler is installed on ServerErrorMiddleware too. Catching here — with
+    CORSMiddleware registered after (and therefore outside) this one — means the
+    error response passes back out through CORS and reaches the client intact.
+    """
+
+    async def dispatch(self, request: Request, call_next):
+        try:
+            return await call_next(request)
+        except Exception as exc:
+            logger.exception("unhandled error on %s %s", request.method, request.url.path)
+            return JSONResponse(
+                status_code=500,
+                content={"detail": f"Server error: {type(exc).__name__}: {exc}"},
+            )
+
+
+# Registration order matters: add_middleware puts each new layer on the outside,
+# so CORS must be added last to wrap CatchAllErrors.
+app.add_middleware(CatchAllErrors)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=os.environ.get("LAWSCHOOL_CORS_ORIGINS", "http://localhost:3000").split(","),
@@ -35,6 +69,9 @@ def get_store() -> MatterStore:
 
 _ocr_engine = None
 _ocr_checked = False
+# EasyOCR readers are not safe to share across concurrent calls, and OCR is
+# CPU-bound anyway — serialize all OCR work behind this lock.
+_ocr_lock = threading.Lock()
 
 
 def get_ocr():
@@ -46,6 +83,27 @@ def get_ocr():
         _ocr_engine = default_ocr_engine()
         _ocr_checked = True
     return _ocr_engine
+
+
+def _ocr_worker(data_dir: str, matter_id: str, filename: str) -> None:
+    """Background OCR job.
+
+    Runs in a worker thread (FastAPI runs sync background tasks in its
+    threadpool), so the event loop stays free to serve other requests while
+    pages are being read. Never raise into the task runner.
+    """
+    store = MatterStore(Path(data_dir))
+    try:
+        with _ocr_lock:
+            engine = get_ocr()
+            if engine is None:
+                store.set_ocr_status(
+                    matter_id, filename, "failed", "no OCR engine installed"
+                )
+                return
+            store.ocr_document(matter_id, filename, engine)
+    except Exception as exc:  # already recorded on the document; don't crash the worker
+        logger.exception("OCR failed for %s/%s: %s", matter_id, filename, exc)
 
 
 class CreateMatterRequest(BaseModel):
@@ -76,7 +134,15 @@ def get_matter(matter_id: str) -> MatterManifest:
 
 
 @app.post("/matters/{matter_id}/files")
-async def upload_file(matter_id: str, file: UploadFile) -> DocumentRecord:
+async def upload_file(
+    matter_id: str, file: UploadFile, background: BackgroundTasks
+) -> DocumentRecord:
+    """Store a PDF and return immediately.
+
+    Only the text layer is read here. Scanned pages are flagged and OCR'd by a
+    background worker — OCR is CPU-bound and would otherwise block the event
+    loop, freezing the whole API for the duration of the upload.
+    """
     if not file.filename or not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=422, detail="only PDF uploads supported for now")
     store = get_store()
@@ -85,7 +151,33 @@ async def upload_file(matter_id: str, file: UploadFile) -> DocumentRecord:
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="matter not found")
     content = await file.read()
-    return store.add_pdf(matter_id, file.filename, content, ocr=get_ocr())
+    try:
+        record = await run_in_threadpool(store.add_pdf, matter_id, file.filename, content)
+    except UnreadablePdf as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    if record.ocr_status == "pending":
+        background.add_task(
+            _ocr_worker, str(store.root), matter_id, file.filename
+        )
+    return record
+
+
+@app.post("/matters/{matter_id}/files/{filename}/ocr", status_code=202)
+def start_ocr(matter_id: str, filename: str, background: BackgroundTasks) -> dict:
+    """Queue (or retry) OCR for a stored document. Returns immediately."""
+    store = get_store()
+    try:
+        manifest = store.get(matter_id)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="matter not found")
+    doc = next((d for d in manifest.documents if d.file == filename), None)
+    if doc is None:
+        raise HTTPException(status_code=404, detail="file not found")
+    if doc.ocr_status == "running":
+        return {"ocr_status": "running"}
+    store.set_ocr_status(matter_id, filename, "pending")
+    background.add_task(_ocr_worker, str(store.root), matter_id, filename)
+    return {"ocr_status": "pending"}
 
 
 @app.delete("/matters/{matter_id}", status_code=204)

@@ -10,12 +10,16 @@ import shutil
 import uuid
 from datetime import date
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
 from pipeline.ingest.classify import classify_doc_type
 from pipeline.ingest.extract import OcrEngine, PageExtract, extract_pages
 from pipeline.models import DocType, Language
+
+
+OcrStatus = Literal["not_needed", "pending", "running", "done", "failed"]
 
 
 class PageRecord(BaseModel):
@@ -31,6 +35,10 @@ class DocumentRecord(BaseModel):
     doc_type: DocType
     pages: list[PageRecord]
     needs_ocr_pages: list[int] = Field(default_factory=list)
+    # OCR is slow (seconds per page on CPU), so it never runs inside the upload
+    # request — see MatterStore.add_pdf / ocr_document.
+    ocr_status: OcrStatus = "not_needed"
+    ocr_error: str | None = None
 
 
 class MatterManifest(BaseModel):
@@ -83,17 +91,10 @@ class MatterStore:
         shutil.rmtree(self._matter_dir(matter_id))
 
     # -- ingestion ----------------------------------------------------------
-    def add_pdf(
-        self, matter_id: str, filename: str, content: bytes, ocr: OcrEngine | None = None
-    ) -> DocumentRecord:
-        """Store a PDF, extract every page with provenance, classify doc type."""
-        manifest = self.get(matter_id)
-        dest = self.files_dir(matter_id) / filename
-        dest.write_bytes(content)
-
-        pages = extract_pages(dest, ocr=ocr)
+    def _record_for(self, filename: str, pages: list[PageExtract]) -> DocumentRecord:
         head_text = "\n".join(p.text for p in pages[:3])
-        record = DocumentRecord(
+        needs_ocr = [p.page for p in pages if p.method == "needs_ocr"]
+        return DocumentRecord(
             file=filename,
             doc_type=classify_doc_type(head_text),
             pages=[
@@ -106,14 +107,67 @@ class MatterStore:
                 )
                 for p in pages
             ],
-            needs_ocr_pages=[p.page for p in pages if p.method == "needs_ocr"],
+            needs_ocr_pages=needs_ocr,
+            ocr_status="pending" if needs_ocr else "not_needed",
         )
 
-        self._save_pages(matter_id, filename, pages)
-        manifest.documents = [d for d in manifest.documents if d.file != filename]
+    def _put_record(self, matter_id: str, record: DocumentRecord) -> None:
+        manifest = self.get(matter_id)
+        manifest.documents = [d for d in manifest.documents if d.file != record.file]
         manifest.documents.append(record)
         self._save(manifest)
+
+    def add_pdf(self, matter_id: str, filename: str, content: bytes) -> DocumentRecord:
+        """Store a PDF and extract its text layer. Fast — never runs OCR.
+
+        Pages with no text layer are flagged `needs_ocr` and the document is
+        marked ocr_status="pending"; call `ocr_document` (off the request path)
+        to read them.
+        """
+        dest = self.files_dir(matter_id) / filename
+        dest.write_bytes(content)
+
+        try:
+            pages = extract_pages(dest, ocr=None)
+        except Exception:
+            dest.unlink(missing_ok=True)  # don't keep a file we can't read
+            raise
+        record = self._record_for(filename, pages)
+        self._save_pages(matter_id, filename, pages)
+        self._put_record(matter_id, record)
         return record
+
+    def set_ocr_status(
+        self,
+        matter_id: str,
+        filename: str,
+        status: OcrStatus,
+        error: str | None = None,
+    ) -> None:
+        manifest = self.get(matter_id)
+        for doc in manifest.documents:
+            if doc.file == filename:
+                doc.ocr_status = status
+                doc.ocr_error = error
+        self._save(manifest)
+
+    def ocr_document(
+        self, matter_id: str, filename: str, ocr: OcrEngine
+    ) -> DocumentRecord:
+        """Re-extract a stored PDF with OCR. Blocking and slow — never call
+        this from an async request handler; run it in a worker thread."""
+        self.set_ocr_status(matter_id, filename, "running")
+        try:
+            path = self.files_dir(matter_id) / filename
+            pages = extract_pages(path, ocr=ocr)
+            record = self._record_for(filename, pages)
+            record.ocr_status = "done"
+            self._save_pages(matter_id, filename, pages)
+            self._put_record(matter_id, record)
+            return record
+        except Exception as exc:
+            self.set_ocr_status(matter_id, filename, "failed", str(exc))
+            raise
 
     def load_pages(self, matter_id: str, filename: str) -> list[PageExtract]:
         raw = json.loads(self.pages_path(matter_id, filename).read_text())
