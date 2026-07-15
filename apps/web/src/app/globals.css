@@ -102,6 +102,22 @@ body {
   animation: analyzing-sweep 1.6s ease-in-out infinite;
 }
 
+/* Quiet heartbeat for a scan being read by OCR in the background. The
+   shimmer bar above is too loud for a chip this small — a dot will do. */
+@keyframes ocr-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.ocr-pulse {
+  animation: ocr-pulse 1.4s ease-in-out infinite;
+}
+
 /* Thin, unobtrusive scrollbars for the dense panes */
 .pane-scroll {
   scrollbar-width: thin;

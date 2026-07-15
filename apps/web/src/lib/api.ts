@@ -7,6 +7,7 @@ import type {
   GenerateArtifactsResponse,
   MatterArtifacts,
   MatterManifest,
+  OcrStatus,
   QueryResponse,
 } from "./types";
 
@@ -80,6 +81,17 @@ export function uploadFile(id: string, file: File): Promise<DocumentRecord> {
 
 export function fileUrl(id: string, filename: string): string {
   return `${API_URL}/matters/${encodeURIComponent(id)}/files/${encodeURIComponent(filename)}`;
+}
+
+/** Queue (or retry) background OCR for one scanned document. */
+export function startOcr(
+  id: string,
+  filename: string,
+): Promise<{ ocr_status: OcrStatus }> {
+  return request<{ ocr_status: OcrStatus }>(
+    `/matters/${encodeURIComponent(id)}/files/${encodeURIComponent(filename)}/ocr`,
+    { method: "POST" },
+  );
 }
 
 export function generateArtifacts(

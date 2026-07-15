@@ -13,11 +13,20 @@ export interface PageRecord {
   chars: number;
 }
 
+export type OcrStatus =
+  | "not_needed"
+  | "pending"
+  | "running"
+  | "done"
+  | "failed";
+
 export interface DocumentRecord {
   file: string;
   doc_type: string;
   pages: PageRecord[];
   needs_ocr_pages: number[];
+  ocr_status: OcrStatus;
+  ocr_error: string | null;
 }
 
 export interface MatterManifest {

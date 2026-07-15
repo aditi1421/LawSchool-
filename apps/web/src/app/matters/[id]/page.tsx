@@ -13,6 +13,7 @@ import {
   generateArtifacts,
   getArtifacts,
   getMatter,
+  startOcr,
   uploadFile,
 } from "@/lib/api";
 import type {
@@ -37,6 +38,57 @@ const PdfViewer = dynamic(() => import("@/components/PdfViewer"), {
   ),
 });
 
+/** Where a scanned document stands in the background OCR queue. A born-digital
+ *  document ("not_needed") says nothing at all — silence is the good case. */
+function OcrChip({ doc }: { doc: DocumentRecord }) {
+  const pages = doc.needs_ocr_pages.join(", ");
+
+  switch (doc.ocr_status) {
+    case "pending":
+      return (
+        <span
+          title={pages ? `Scanned pages queued for OCR: ${pages}` : undefined}
+          className="shrink-0 rounded-sm border border-verify/30 bg-verify-wash px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-verify"
+        >
+          OCR queued
+        </span>
+      );
+    case "running":
+      return (
+        <span
+          title={pages ? `Reading scanned pages: ${pages}` : undefined}
+          className="inline-flex shrink-0 items-center gap-1 rounded-sm border border-verify/30 bg-verify-wash px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-verify"
+        >
+          <span
+            className="ocr-pulse h-1 w-1 shrink-0 rounded-full bg-verify"
+            aria-hidden
+          />
+          Reading scan…
+        </span>
+      );
+    case "failed":
+      return (
+        <span
+          title={doc.ocr_error ?? "OCR failed on the scanned pages."}
+          className="shrink-0 rounded-sm border border-oxblood/30 bg-oxblood-wash px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-oxblood"
+        >
+          OCR failed
+        </span>
+      );
+    case "done":
+      return (
+        <span
+          title={pages ? `Scanned pages read by OCR: ${pages}` : undefined}
+          className="shrink-0 rounded-sm border border-accent/25 bg-accent-wash px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-accent"
+        >
+          OCR done
+        </span>
+      );
+    default:
+      return null;
+  }
+}
+
 export default function MatterWorkspace({
   params,
 }: {
@@ -58,8 +110,14 @@ export default function MatterWorkspace({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
+  const [retryingOcr, setRetryingOcr] = useState<string[]>([]);
+
   const [viewerTarget, setViewerTarget] = useState<ViewerTarget | null>(null);
   const nonceRef = useRef(0);
+
+  const ocrActive = (manifest?.documents ?? []).some(
+    (d) => d.ocr_status === "pending" || d.ocr_status === "running",
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -97,6 +155,35 @@ export default function MatterWorkspace({
     const t = setInterval(() => setElapsed((s) => s + 1), 1000);
     return () => clearInterval(t);
   }, [generating]);
+
+  // OCR runs on the server with no push channel back, so poll the manifest
+  // while any scan is still being read and stop once they all land. Pausing
+  // during an upload keeps an in-flight poll from clobbering the fresh record
+  // with a snapshot taken before it existed.
+  useEffect(() => {
+    if (!ocrActive || uploading) return;
+    let cancelled = false;
+    const poll = () => {
+      if (document.visibilityState === "hidden") return;
+      getMatter(id)
+        .then((m) => {
+          if (!cancelled)
+            setManifest((prev) =>
+              prev ? { ...prev, documents: m.documents } : m,
+            );
+        })
+        .catch(() => {
+          // A dropped poll is not worth a banner — the next tick retries.
+        });
+    };
+    const t = setInterval(poll, 3000);
+    document.addEventListener("visibilitychange", poll);
+    return () => {
+      cancelled = true;
+      clearInterval(t);
+      document.removeEventListener("visibilitychange", poll);
+    };
+  }, [id, ocrActive, uploading]);
 
   const jumpTo = useCallback(
     (cite: Citation) => {
@@ -146,6 +233,32 @@ export default function MatterWorkspace({
       }
     }
     setUploading(false);
+  };
+
+  const retryOcr = async (filename: string) => {
+    if (retryingOcr.includes(filename)) return;
+    setRetryingOcr((prev) => [...prev, filename]);
+    setNotice(null);
+    try {
+      const { ocr_status } = await startOcr(id, filename);
+      // Take the server's word for the new status; polling picks it up from here.
+      setManifest((prev) =>
+        prev
+          ? {
+              ...prev,
+              documents: prev.documents.map((d) =>
+                d.file === filename ? { ...d, ocr_status, ocr_error: null } : d,
+              ),
+            }
+          : prev,
+      );
+    } catch (err) {
+      setNotice(
+        `${filename}: ${err instanceof Error ? err.message : "could not queue OCR"}`,
+      );
+    } finally {
+      setRetryingOcr((prev) => prev.filter((f) => f !== filename));
+    }
   };
 
   const generate = async () => {
@@ -278,13 +391,16 @@ export default function MatterWorkspace({
             {documents.length > 0 && (
               <ul className="pane-scroll mt-2 max-h-36 space-y-1 overflow-y-auto">
                 {documents.map((doc: DocumentRecord) => (
-                  <li key={doc.file}>
+                  <li
+                    key={doc.file}
+                    className="flex items-center rounded-sm border border-rule-soft bg-paper transition-colors hover:border-accent hover:bg-accent-wash/60"
+                  >
                     <button
                       type="button"
                       onClick={() =>
                         jumpTo({ file: doc.file, page: 1, para: null })
                       }
-                      className="flex w-full items-center gap-2 rounded-sm border border-rule-soft bg-paper px-2.5 py-1.5 text-left transition-colors hover:border-accent hover:bg-accent-wash/60"
+                      className="flex min-w-0 flex-1 items-center gap-2 px-2.5 py-1.5 text-left"
                     >
                       <span className="min-w-0 flex-1 truncate font-mono text-xs text-ink-soft">
                         {doc.file}
@@ -295,15 +411,18 @@ export default function MatterWorkspace({
                       <span className="shrink-0 font-mono text-[10px] text-ink-muted">
                         {doc.pages.length} pp.
                       </span>
-                      {doc.needs_ocr_pages.length > 0 && (
-                        <span
-                          title={`Pages needing OCR: ${doc.needs_ocr_pages.join(", ")}`}
-                          className="shrink-0 rounded-sm border border-verify/30 bg-verify-wash px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-verify"
-                        >
-                          needs OCR · {doc.needs_ocr_pages.length}
-                        </span>
-                      )}
+                      <OcrChip doc={doc} />
                     </button>
+                    {doc.ocr_status === "failed" && (
+                      <button
+                        type="button"
+                        disabled={retryingOcr.includes(doc.file)}
+                        onClick={() => void retryOcr(doc.file)}
+                        className="shrink-0 py-1.5 pr-2.5 pl-1 text-[10px] font-semibold text-oxblood underline underline-offset-2 disabled:opacity-50"
+                      >
+                        {retryingOcr.includes(doc.file) ? "Retrying…" : "Retry"}
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -334,11 +453,13 @@ export default function MatterWorkspace({
                 <button
                   type="button"
                   onClick={() => void generate()}
-                  disabled={documents.length === 0}
+                  disabled={documents.length === 0 || ocrActive}
                   title={
                     documents.length === 0
                       ? "Upload case-file PDFs first"
-                      : undefined
+                      : ocrActive
+                        ? "Waiting for OCR to finish reading scanned pages"
+                        : undefined
                   }
                   className="rounded-sm bg-accent px-4 py-1.5 text-sm font-semibold text-panel transition-colors hover:bg-accent-deep disabled:cursor-not-allowed disabled:opacity-50"
                 >
