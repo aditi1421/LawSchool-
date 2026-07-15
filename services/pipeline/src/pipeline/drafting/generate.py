@@ -12,6 +12,7 @@ from typing import Literal, Protocol
 from pipeline.artifacts.generate import build_context
 from pipeline.drafting.models import DraftDocument, DraftType
 from pipeline.drafting.prompts import DRAFT_SYSTEM, GUIDANCE
+from pipeline.llm import ClaudeLLM, StructuredLLM, get_llm
 from pipeline.models import Chunk, Citation
 
 PLACEHOLDER_MARK = "[●"
@@ -21,26 +22,19 @@ class DraftModel(Protocol):
     def draft(self, system: str, user: str) -> DraftDocument: ...
 
 
-class AnthropicDraftModel:
-    def __init__(self, model: str = "claude-opus-4-8") -> None:
-        import anthropic
+class LLMDraftModel:
+    """Drafting over any StructuredLLM. validate_draft enforces the honesty
+    rules on the result regardless of provider."""
 
-        self._client = anthropic.Anthropic()
-        self._model = model
+    def __init__(self, llm: StructuredLLM | None = None) -> None:
+        self._llm = llm or get_llm()
 
     def draft(self, system: str, user: str) -> DraftDocument:
-        response = self._client.messages.parse(
-            model=self._model,
-            max_tokens=16000,
-            thinking={"type": "adaptive"},
-            system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
-            messages=[{"role": "user", "content": user}],
-            output_format=DraftDocument,
-        )
-        parsed = response.parsed_output
-        if parsed is None:
-            raise RuntimeError(f"drafting returned no parseable output ({response.stop_reason})")
-        return parsed
+        return self._llm.generate(system, user, DraftDocument)
+
+
+def AnthropicDraftModel(model: str = "claude-opus-4-8") -> LLMDraftModel:
+    return LLMDraftModel(ClaudeLLM(model=model))
 
 
 @dataclass

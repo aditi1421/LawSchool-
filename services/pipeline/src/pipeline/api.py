@@ -12,20 +12,43 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from pipeline.artifacts.generate import AnthropicArtifactModel
+from pipeline.artifacts.generate import LLMArtifactModel
 from pipeline.export import artifacts_to_docx
 from pipeline.ingest.extract import UnreadablePdf
+from pipeline.jobs import (
+    JobAlreadyRunning,
+    create_job,
+    get_job,
+    list_jobs,
+    reconcile_stale_jobs,
+    run_job,
+)
+from pipeline.llm import OllamaUnavailable
+from pipeline.llm.ollama import RecordTooLongForModel
 from pipeline.db.repository import MatterRepository
 from pipeline.embeddings import get_embedder
 from pipeline.ingest.matter import DocumentRecord, MatterManifest
 from pipeline.storage import get_storage
 from pipeline.models import MatterArtifacts
-from pipeline.query import AnthropicQueryModel, GroundedAnswer, answer_question
+from pipeline.query import GroundedAnswer, LLMQueryModel, answer_question
 from pipeline.service import load_artifacts, retrieve, run_artifacts
 
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="lawschool pipeline")
+
+
+@app.on_event("startup")
+def _startup() -> None:
+    """Workers are threads, so a restart kills them silently. Any job still
+    marked running belongs to a dead process — fail it, or the UI spins on
+    work nothing is doing and the uniqueness index blocks new runs."""
+    try:
+        n = reconcile_stale_jobs()
+        if n:
+            logger.warning("failed %d job(s) orphaned by a restart", n)
+    except Exception:
+        logger.exception("could not reconcile stale jobs at startup")
 
 # Dev CORS — the Next.js app on :3000 talks to this service on :8010.
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
@@ -260,29 +283,68 @@ def get_chunk_text(
     return ChunkTextResponse(text="\n".join(c.text for c in on_page))
 
 
-class ArtifactsResponse(BaseModel):
-    artifacts: MatterArtifacts
-    violations: list[dict]  # grounding violations removed before display
+class JobResponse(BaseModel):
+    job_id: str
+    status: str
 
 
-@app.post("/matters/{matter_id}/artifacts")
-def generate_matter_artifacts(matter_id: str) -> ArtifactsResponse:
+@app.get("/jobs/{job_id}")
+def get_job_status(job_id: str) -> dict:
+    job = get_job(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="job not found")
+    return job
+
+
+@app.get("/matters/{matter_id}/jobs")
+def get_matter_jobs(matter_id: str, kind: str | None = None) -> list[dict]:
+    return list_jobs(matter_id, kind)  # type: ignore[arg-type]
+
+
+@app.post("/matters/{matter_id}/artifacts", status_code=202)
+def generate_matter_artifacts(matter_id: str, background: BackgroundTasks) -> JobResponse:
+    """Queue brief generation and return immediately.
+
+    Generation takes minutes; the caller polls GET /jobs/{job_id}. The result
+    is written to the matter whether or not anyone is still listening.
+    """
     store = get_store()
     try:
         store.get(matter_id)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="matter not found")
+    if not store.matter_chunks(matter_id):
+        raise HTTPException(
+            status_code=422, detail="matter has no readable content — upload documents first"
+        )
+
     try:
-        artifacts, violations = run_artifacts(store, matter_id, AnthropicArtifactModel())
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
-    return ArtifactsResponse(
-        artifacts=artifacts,
-        violations=[
-            {"kind": v.kind, "artifact": v.artifact, "claim": v.claim, "cite": v.cite.model_dump()}
-            for v in violations
-        ],
-    )
+        job_id = create_job(matter_id, "artifacts")
+    except JobAlreadyRunning as e:
+        # 409, not a silent second run: two models racing to overwrite each
+        # other is worse than refusing.
+        raise HTTPException(status_code=409, detail=str(e))
+
+    background.add_task(_run_artifacts_job, job_id, matter_id)
+    return JobResponse(job_id=job_id, status="queued")
+
+
+def _run_artifacts_job(job_id: str, matter_id: str) -> None:
+    def work():
+        model = LLMArtifactModel()
+        _, violations = run_artifacts(get_store(), matter_id, model)
+        return (
+            {
+                "violations": [
+                    {"kind": v.kind, "artifact": v.artifact, "claim": v.claim,
+                     "cite": v.cite.model_dump()}
+                    for v in violations
+                ]
+            },
+            model._llm.name,
+        )
+
+    run_job(job_id, work)
 
 
 @app.get("/matters/{matter_id}/artifacts")
@@ -305,7 +367,7 @@ def query_matter(matter_id: str, req: QueryRequest) -> GroundedAnswer:
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="matter not found")
     retrieved = retrieve(store, matter_id, req.question)
-    return answer_question(req.question, retrieved, AnthropicQueryModel())
+    return answer_question(req.question, retrieved, LLMQueryModel())
 
 
 class GenerateDraftRequest(BaseModel):
@@ -319,9 +381,10 @@ class DraftResponse(BaseModel):
     violations: list[dict]
 
 
-@app.post("/matters/{matter_id}/drafts")
-def create_draft(matter_id: str, req: GenerateDraftRequest) -> DraftResponse:
-    from pipeline.drafting import AnthropicDraftModel, DraftType, generate_draft
+@app.post("/matters/{matter_id}/drafts", status_code=202)
+def create_draft(matter_id: str, req: GenerateDraftRequest, background: BackgroundTasks) -> JobResponse:
+    """Queue drafting and return immediately; poll GET /jobs/{job_id}."""
+    from pipeline.drafting import DraftType
 
     store = get_store()
     try:
@@ -332,25 +395,44 @@ def create_draft(matter_id: str, req: GenerateDraftRequest) -> DraftResponse:
         doc_type = DraftType(req.doc_type)
     except ValueError:
         raise HTTPException(status_code=422, detail=f"unknown doc_type: {req.doc_type}")
-    chunks = store.matter_chunks(matter_id)
-    if not chunks:
+    if not store.matter_chunks(matter_id):
         raise HTTPException(status_code=422, detail="matter has no readable content")
-    draft, violations = generate_draft(
-        matter_id, doc_type, chunks, AnthropicDraftModel(), instructions=req.instructions
-    )
-    draft_id = store.save_draft(matter_id, doc_type.value, draft.model_dump(mode='json'))
-    return DraftResponse(
-        draft_id=draft_id,
-        draft=draft.model_dump(mode="json"),
-        violations=[
+
+    try:
+        job_id = create_job(
+            matter_id, "draft", {"doc_type": doc_type.value, "instructions": req.instructions}
+        )
+    except JobAlreadyRunning as e:
+        raise HTTPException(status_code=409, detail=str(e))
+
+    background.add_task(_run_draft_job, job_id, matter_id, doc_type.value, req.instructions)
+    return JobResponse(job_id=job_id, status="queued")
+
+
+def _run_draft_job(job_id: str, matter_id: str, doc_type: str, instructions: str) -> None:
+    from pipeline.drafting import DraftType, LLMDraftModel, generate_draft
+
+    def work():
+        store = get_store()
+        model = LLMDraftModel()
+        draft, violations = generate_draft(
+            matter_id, DraftType(doc_type), store.matter_chunks(matter_id), model,
+            instructions=instructions,
+        )
+        draft_id = store.save_draft(matter_id, doc_type, draft.model_dump(mode="json"))
+        return (
             {
-                "kind": v.kind,
-                "paragraph": v.paragraph,
-                "cite": v.cite.model_dump() if v.cite else None,
-            }
-            for v in violations
-        ],
-    )
+                "draft_id": draft_id,
+                "violations": [
+                    {"kind": v.kind, "paragraph": v.paragraph,
+                     "cite": v.cite.model_dump() if v.cite else None}
+                    for v in violations
+                ],
+            },
+            model._llm.name,
+        )
+
+    run_job(job_id, work)
 
 
 @app.get("/matters/{matter_id}/drafts")

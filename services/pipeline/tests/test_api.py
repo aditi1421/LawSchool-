@@ -186,11 +186,67 @@ def test_artifacts_404_before_generation(api_client) -> None:
 
 
 def test_generate_artifacts_on_empty_matter_is_422_not_a_crash(api_client) -> None:
-    """No readable content must be a clear error, and must not reach the model."""
+    """No readable content must be a clear error, and must not queue a job."""
     matter_id = api_client.post("/matters", json={"title": "Empty"}).json()["matter_id"]
     resp = api_client.post(f"/matters/{matter_id}/artifacts")
     assert resp.status_code == 422
     assert "no readable content" in resp.json()["detail"]
+    assert api_client.get(f"/matters/{matter_id}/jobs").json() == []
+
+
+def test_generate_returns_a_job_not_a_held_request(
+    api_client, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The response must come back immediately with a job to poll — a
+    multi-minute request held open by a browser tab is not an architecture."""
+    monkeypatch.setattr("pipeline.api._run_artifacts_job", lambda *a: None)
+    matter_id = api_client.post("/matters", json={"title": "M"}).json()["matter_id"]
+    pdf = tmp_path / "plaint.pdf"
+    make_text_pdf(pdf, [PLAINT_TEXT])
+    _upload(api_client, matter_id, "plaint.pdf", pdf)
+
+    resp = api_client.post(f"/matters/{matter_id}/artifacts")
+    assert resp.status_code == 202
+    job_id = resp.json()["job_id"]
+    assert resp.json()["status"] == "queued"
+
+    job = api_client.get(f"/jobs/{job_id}").json()
+    assert job["kind"] == "artifacts" and job["matter_id"] == matter_id
+    assert api_client.get("/jobs/nonexistent").status_code == 404
+
+
+def test_double_click_is_refused_not_duplicated(
+    api_client, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr("pipeline.api._run_artifacts_job", lambda *a: None)
+    matter_id = api_client.post("/matters", json={"title": "M"}).json()["matter_id"]
+    pdf = tmp_path / "plaint.pdf"
+    make_text_pdf(pdf, [PLAINT_TEXT])
+    _upload(api_client, matter_id, "plaint.pdf", pdf)
+
+    assert api_client.post(f"/matters/{matter_id}/artifacts").status_code == 202
+    second = api_client.post(f"/matters/{matter_id}/artifacts")
+    assert second.status_code == 409  # not a second model racing the first
+    assert "already running" in second.json()["detail"]
+    assert len(api_client.get(f"/matters/{matter_id}/jobs").json()) == 1
+
+
+def test_draft_returns_a_job(api_client, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("pipeline.api._run_draft_job", lambda *a: None)
+    matter_id = api_client.post("/matters", json={"title": "M"}).json()["matter_id"]
+    pdf = tmp_path / "plaint.pdf"
+    make_text_pdf(pdf, [PLAINT_TEXT])
+    _upload(api_client, matter_id, "plaint.pdf", pdf)
+
+    resp = api_client.post(
+        f"/matters/{matter_id}/drafts",
+        json={"doc_type": "legal_notice", "instructions": "demand possession"},
+    )
+    assert resp.status_code == 202
+    job = api_client.get(f"/jobs/{resp.json()['job_id']}").json()
+    assert job["kind"] == "draft"
+    # A failed draft must still say what it was asked for; the caller is gone.
+    assert job["params"] == {"doc_type": "legal_notice", "instructions": "demand possession"}
 
 
 def test_drafts_empty_and_404s(api_client) -> None:

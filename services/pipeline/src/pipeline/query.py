@@ -11,6 +11,7 @@ from typing import Protocol
 from pydantic import BaseModel, Field, model_validator
 
 from pipeline.artifacts.generate import build_context
+from pipeline.llm import ClaudeLLM, StructuredLLM, get_llm
 from pipeline.models import Chunk, Citation
 
 QUERY_SYSTEM = """You answer questions about an Indian litigation case file using ONLY \
@@ -39,26 +40,19 @@ class QueryModel(Protocol):
     def answer(self, system: str, user: str) -> GroundedAnswer: ...
 
 
-class AnthropicQueryModel:
-    def __init__(self, model: str = "claude-opus-4-8") -> None:
-        import anthropic
+class LLMQueryModel:
+    """Grounded Q&A over any StructuredLLM. answer_question still refuses any
+    answer whose citations do not resolve, whatever the provider."""
 
-        self._client = anthropic.Anthropic()
-        self._model = model
+    def __init__(self, llm: StructuredLLM | None = None) -> None:
+        self._llm = llm or get_llm()
 
     def answer(self, system: str, user: str) -> GroundedAnswer:
-        response = self._client.messages.parse(
-            model=self._model,
-            max_tokens=4000,
-            thinking={"type": "adaptive"},
-            system=system,
-            messages=[{"role": "user", "content": user}],
-            output_format=GroundedAnswer,
-        )
-        parsed = response.parsed_output
-        if parsed is None:
-            raise RuntimeError(f"query returned no parseable output ({response.stop_reason})")
-        return parsed
+        return self._llm.generate(system, user, GroundedAnswer)
+
+
+def AnthropicQueryModel(model: str = "claude-opus-4-8") -> LLMQueryModel:
+    return LLMQueryModel(ClaudeLLM(model=model))
 
 
 def answer_question(

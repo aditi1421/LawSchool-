@@ -2,6 +2,7 @@
 
 from pipeline.artifacts.generate import (
     AnthropicArtifactModel,
+    LLMArtifactModel,
     GroundingViolation,
     generate_artifacts,
     validate_grounding,
@@ -9,6 +10,7 @@ from pipeline.artifacts.generate import (
 
 __all__ = [
     "AnthropicArtifactModel",
+    "LLMArtifactModel",
     "GroundingViolation",
     "generate_artifacts",
     "validate_grounding",

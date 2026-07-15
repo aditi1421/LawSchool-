@@ -13,39 +13,36 @@ from dataclasses import dataclass
 from typing import Literal, Protocol
 
 from pipeline.artifacts.prompts import MATTER_GUIDANCE, SYSTEM_PROMPT
+from pipeline.llm import ClaudeLLM, StructuredLLM, get_llm
 from pipeline.models import Chunk, Citation, MatterArtifacts
 
 OCR_CONFIDENCE_THRESHOLD = 0.7
 
 
 class ArtifactModel(Protocol):
-    """The LLM seam — swap AnthropicArtifactModel for a fake in tests/evals."""
+    """The generation seam — a fake stands in for tests."""
 
     def generate(self, system: str, user: str) -> MatterArtifacts: ...
 
 
-class AnthropicArtifactModel:
-    """Claude-backed generator using schema-validated structured output."""
+class LLMArtifactModel:
+    """Artifact generation over any StructuredLLM (Claude or Ollama).
 
-    def __init__(self, model: str = "claude-opus-4-8") -> None:
-        import anthropic
+    The provider is a config choice; the honesty guarantee is not. Whatever
+    comes back goes through validate_grounding before anyone sees it.
+    """
 
-        self._client = anthropic.Anthropic()
-        self._model = model
+    def __init__(self, llm: StructuredLLM | None = None) -> None:
+        self._llm = llm or get_llm()
 
     def generate(self, system: str, user: str) -> MatterArtifacts:
-        response = self._client.messages.parse(
-            model=self._model,
-            max_tokens=16000,
-            thinking={"type": "adaptive"},
-            system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
-            messages=[{"role": "user", "content": user}],
-            output_format=MatterArtifacts,
-        )
-        parsed = response.parsed_output
-        if parsed is None:
-            raise RuntimeError(f"artifact generation returned no parseable output ({response.stop_reason})")
-        return parsed
+        return self._llm.generate(system, user, MatterArtifacts)
+
+
+def AnthropicArtifactModel(model: str = "claude-opus-4-8") -> LLMArtifactModel:
+    """Claude-backed artifact model. Kept as a named entry point for callers
+    that must pin Claude regardless of LAWSCHOOL_LLM (the eval gate)."""
+    return LLMArtifactModel(ClaudeLLM(model=model))
 
 
 def build_context(chunks: list[Chunk]) -> str:

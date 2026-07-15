@@ -21,11 +21,13 @@ from sqlalchemy import (
     DateTime,
     Float,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
     UniqueConstraint,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -61,6 +63,9 @@ class MatterRow(Base):
     )
     drafts: Mapped[list["DraftRow"]] = relationship(
         back_populates="matter", cascade="all, delete-orphan", order_by="DraftRow.created_at.desc()"
+    )
+    jobs: Mapped[list["JobRow"]] = relationship(
+        back_populates="matter", cascade="all, delete-orphan", order_by="JobRow.created_at.desc()"
     )
 
 
@@ -153,6 +158,56 @@ class MatterArtifactsRow(Base):
     )
 
     matter: Mapped["MatterRow"] = relationship(back_populates="artifacts")
+
+
+class JobRow(Base):
+    """A long-running generation, tracked out of the request.
+
+    Generation takes minutes (a local model is minutes of compute; Claude with
+    adaptive thinking on a long record is not much better). Holding an HTTP
+    request open for that is not an architecture: the browser owns the work,
+    navigating away orphans it, and a second click silently starts a second
+    model whose result overwrites the first.
+
+    The partial unique index below is the real guard — checking "is one already
+    running?" in Python loses the race between two clicks. The database refuses
+    the second insert instead.
+    """
+
+    __tablename__ = "jobs"
+    __table_args__ = (
+        Index(
+            "uq_one_live_job_per_matter_kind",
+            "matter_id",
+            "kind",
+            unique=True,
+            postgresql_where=text("status IN ('queued','running')"),
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True)
+    matter_id: Mapped[str] = mapped_column(
+        ForeignKey("matters.id", ondelete="CASCADE"), index=True
+    )
+    kind: Mapped[str] = mapped_column(String(32))  # artifacts | draft
+    status: Mapped[str] = mapped_column(String(16), default="queued")
+    # What the job was asked to do (draft doc_type, instructions...), so a
+    # failed job can be understood without the caller still being around.
+    params: Mapped[dict] = mapped_column(JSONB, default=dict)
+    # Small pointer/summary only — the artifact or draft itself is written to
+    # its own table.
+    result: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Which provider produced it: local and hosted output are not equivalent
+    # and a reader needs to know which they are looking at.
+    provider: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    matter: Mapped["MatterRow"] = relationship(back_populates="jobs")
 
 
 class DraftRow(Base):
