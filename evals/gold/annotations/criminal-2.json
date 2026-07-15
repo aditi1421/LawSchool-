@@ -1,0 +1,103 @@
+{
+  "matter_id": "criminal-2",
+  "lens": "criminal",
+  "files": ["sanjay-chandra-v-cbi-sc-2011.pdf"],
+  "events": [
+    {
+      "event_date": "2007-03-02",
+      "description": "M/s Swan Telecom (P) Ltd (STPL) filed its application dated 02.03.2007 to DoT for UAS licences, alleged to be fraudulent as STPL was ineligible under clause 8 of the UASL Guidelines 2005",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2007-08-28",
+      "description": "TRAI recommendations dated 28.08.2007 on use of dual technology by UAS licensees, after which Reliance Communications Ltd got GSM spectrum under the Dual Technology policy",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2007-09-25",
+      "description": "Cut-off date of 25.09.2007 alleged to have been decided by accused public servants of DoT primarily to allow consideration of Unitech group applications for UAS licences",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2007-10-01",
+      "description": "Accused Shahid Balwa and Vinod Goenka joined M/s Swan Telecom Pvt Ltd and M/s Tiger Traders Pvt Ltd as directors",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 3 }
+    },
+    {
+      "event_date": "2007-10-10",
+      "description": "Sanjay Chandra, on behalf of the Unitech group companies, alleged to have been ready with drafts of Rs. 1658 crores as early as 10th October 2007, being aware of the design of the allocation of LOIs",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2007-10-18",
+      "description": "DB group acquired the majority stake in TTPL/M/s Swan Telecom Pvt Ltd; fresh equity of 49.90 lakh shares allotted to M/s DB Infrastructure Pvt Ltd",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 3 }
+    },
+    {
+      "event_date": "2011-04-20",
+      "description": "Special Judge, CBI, New Delhi rejected the bail applications filed by the appellants",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 4 }
+    },
+    {
+      "event_date": "2011-05-23",
+      "description": "Learned Single Judge of the High Court of Delhi rejected the appellants' bail applications under Section 439 CrPC by common judgment and order",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 4 }
+    },
+    {
+      "event_date": "2011-06-20",
+      "description": "Supreme Court order in Sharad Kumar v. Central Bureau of Investigation rejecting bail to some co-accused in the same case, relied on by the ASG",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 6 }
+    },
+    {
+      "event_date": "2011-11-23",
+      "description": "Supreme Court ordered the appellants to be released on bail on executing a bond with two solvent sureties of Rs. 5 lakhs each to the satisfaction of the Special Judge, CBI, New Delhi, subject to conditions",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 17 }
+    }
+  ],
+  "facts": [
+    {
+      "key": "case_numbers",
+      "value": "Criminal Appeal Nos. 2178, 2179, 2180, 2181 and 2182 of 2011 (arising out of SLP (Crl.) Nos. 5650, 5902, 6190, 6288 and 6315 of 2011), Supreme Court of India",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 1 }
+    },
+    {
+      "key": "parties",
+      "value": "Appellants: Sanjay Chandra, Vinod Goenka, Gautam Doshi, Hari Nair and Surendra Pipara; Respondent: Central Bureau of Investigation",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 1 }
+    },
+    {
+      "key": "sections_invoked",
+      "value": "Sections 420-B, 468, 471 and 109 Indian Penal Code and Section 13(2) read with Section 13(1)(d) Prevention of Corruption Act, 1988",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 8 }
+    },
+    {
+      "key": "sanjay_chandra_role",
+      "value": "Managing Director of M/s Unitech Wireless (Tamil Nadu) Limited, looking after the telecom business through 8 group companies of Unitech Limited; alleged criminal conspiracy with A. Raja, R.K. Chandolia and others to get UAS licences for an ineligible company",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 2 }
+    },
+    {
+      "key": "nature_of_offence",
+      "value": "Economic offences (2G spectrum/UAS licence allocation) alleged to have resulted in loss to the State exchequer; punishment for the offences charged may extend to seven years",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 8 }
+    },
+    {
+      "key": "bench",
+      "value": "G. S. Singhvi and H. L. Dattu, JJ.",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 1 }
+    },
+    {
+      "key": "outcome",
+      "value": "Bail granted to all five appellants pending trial, on bond with two solvent sureties of Rs. 5 lakhs each, with conditions including no inducement or threat to witnesses, presence before the trial court, and surrender of passports",
+      "source": { "file": "sanjay-chandra-v-cbi-sc-2011.pdf", "page": 17 }
+    }
+  ],
+  "doc_index": [
+    {
+      "file": "sanjay-chandra-v-cbi-sc-2011.pdf",
+      "title": "Sanjay Chandra vs CBI, Supreme Court of India, judgment dated 23 November 2011 (2G spectrum bail matter)",
+      "doc_type": "judgment",
+      "language": "en"
+    }
+  ],
+  "notes": "DRAFT — annotated by AI from the judgment text; REQUIRES HUMAN REVIEW before use as ship-gate ground truth. Source: Indian Kanoon https://indiankanoon.org/doc/1563495/ (text re-rendered to a text-based PDF; page numbers refer to the rendered PDF, not the official court copy). Ambiguities: the 2007 allegation dates (02.03.2007, 25.09.2007, 01.10.2007, 10.10.2007, 18.10.2007, 28.08.2007) come from the Special Judge's bail-rejection order of 20.04.2011 as quoted in this judgment — they are allegations, not judicial findings. The FIR/RC registration date and charge-sheet filing date are not stated in the judgment. The judgment date 23.11.2011 appears on the signature page (page 18) while the operative bail order is on page 17."
+}

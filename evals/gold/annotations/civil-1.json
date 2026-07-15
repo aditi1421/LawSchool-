@@ -1,0 +1,133 @@
+{
+  "matter_id": "civil-1",
+  "lens": "civil",
+  "files": ["saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf"],
+  "events": [
+    {
+      "event_date": "1981-01-17",
+      "description": "Respondents 1 to 4 entered into agreement of sale with the appellant for the schedule properties (24 acres 95 cents) at Rs. 15,000 per acre (total Rs. 3,75,000); Rs. 1,00,000 paid as advance on the date of the agreement",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 2 }
+    },
+    {
+      "event_date": "1981-01-17",
+      "description": "Fourth respondent, by letter of the same day, acknowledged receipt of Rs. 1,25,000 as commission, agreeing to refund it within three months if the sale remained unconcluded or got cancelled",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 2 }
+    },
+    {
+      "event_date": "1981-02-28",
+      "description": "Appellant paid a further advance of Rs. 1,00,000 (first instalment under clause 4 of the agreement)",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 3 }
+    },
+    {
+      "event_date": "1981-04-02",
+      "description": "Appellant paid Rs. 25,000 towards the second instalment of Rs. 1,00,000 due on 6.4.1981",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 3 }
+    },
+    {
+      "event_date": null,
+      "description": "Appellant failed to pay the balance Rs. 75,000 of the instalment payable on 6.4.1981 and the last instalment of Rs. 75,000 payable on or before 30.5.1981",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 3 }
+    },
+    {
+      "event_date": "1981-08-02",
+      "description": "Respondents 1 to 3 issued notice through counsel cancelling the agreement of sale dated 17.1.1981 under clause 6, on the ground of default in paying the balance sale consideration",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 3 }
+    },
+    {
+      "event_date": "1981-08-07",
+      "description": "Appellant sent a reply through counsel contending time was never intended to be the essence and that respondents had failed to produce the original documents of title",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 3 }
+    },
+    {
+      "event_date": "1981-08-26",
+      "description": "Rejoinder from respondents 1 to 3 denying any variation of the payment terms and reiterating that time was the essence of the contract",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 4 }
+    },
+    {
+      "event_date": "1981-11-11",
+      "description": "Appellant got a public notice published in the newspaper Hindu claiming she had purchased the schedule properties and was in possession, warning third parties against dealing with the owners",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 4 }
+    },
+    {
+      "event_date": "1981-11-14",
+      "description": "Two responses to the public notice: notice from one Gulecha claiming documents of Sy. Nos. 16 and 18 were deposited with him as security for a loan, and notice from respondents 1 to 3 denying the appellant's claims of purchase and possession",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 4 }
+    },
+    {
+      "event_date": "1982-06-19",
+      "description": "Appellant filed C.S. No. 95/1984 on the file of Madras High Court against respondents 1 to 4 seeking specific performance of the agreement of sale dated 17.1.1981 (injunction suit O.S. No. 1709/1981, later C.S. No. 302 of 1989, had been filed before the District Munsif, Poonamallee)",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 5 }
+    },
+    {
+      "event_date": "1984-01-12",
+      "description": "Appellant filed C.S. No. 170 of 1984 in the Madras High Court against the fourth respondent for return of Rs. 1,25,000 paid as commission with interest",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 5 }
+    },
+    {
+      "event_date": "1991-11-29",
+      "description": "Learned Single Judge of the Madras High Court, by common judgment, dismissed all three suits",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 6 }
+    },
+    {
+      "event_date": "2002-06-19",
+      "description": "Division Bench of the Madras High Court dismissed the appellant's three original side appeals by common judgment, affirming the trial court but directing respondents to repay Rs. 3,50,000 with interest at 9% per annum",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 6 }
+    },
+    {
+      "event_date": "2011-07-04",
+      "description": "Supreme Court disposed of the appeals: refund of Rs. 3,50,000 upheld with interest enhanced to 12% per annum from 2.8.1981 to date of payment; contempt petitions and the vendors' cross-appeals dismissed",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 23 }
+    }
+  ],
+  "facts": [
+    {
+      "key": "case_numbers",
+      "value": "Civil Appeal Nos. 7254-7256 of 2002 with Civil Appeal Nos. 4641-42 of 2002 and Contempt Petition (C) No. 28-29 of 2009, Supreme Court of India",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 1 }
+    },
+    {
+      "key": "parties",
+      "value": "Mrs. Saradamani Kandappan (appellant, purchaser/plaintiff) vs Mrs. S. Rajalakshmi & Ors (vendors/defendants); respondents 2, 3 and 4 are respectively the son, daughter and husband of the first respondent",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 1 }
+    },
+    {
+      "key": "suit_property",
+      "value": "Lands measuring 24 acres 95 cents (Survey Nos. 13, 14, 15, 16, 18, 19 and 20) in Chettiaragaram Village, Saidapet Taluk, Chingleput District, with trees, wells, pump-houses, farm godowns, perimeter fence and furniture",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 2 }
+    },
+    {
+      "key": "sale_consideration",
+      "value": "Rs. 15,000 per acre, in all Rs. 3,74,250 rounded off to Rs. 3,75,000; balance of Rs. 2,75,000 payable in three instalments on or before 28.2.1981, 6.4.1981 and 30.5.1981",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 2 }
+    },
+    {
+      "key": "relief_claimed",
+      "value": "Specific performance of the agreement of sale dated 17.1.1981 (C.S. No. 95/1984); permanent injunction protecting possession (C.S. No. 302/1989); return of Rs. 1,25,000 commission (C.S. No. 170/1984)",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 5 }
+    },
+    {
+      "key": "key_holding",
+      "value": "Time stipulated in clauses (4), (5) and (6) of the agreement for payment of the balance price was the essence of the contract; the appellant's failure to adhere to it justified cancellation of the agreement by the respondents",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 11 }
+    },
+    {
+      "key": "statutes_considered",
+      "value": "Section 55 Indian Contract Act, 1872 (time as essence); Sections 51-54 Contract Act (reciprocal promises); Sections 34 and 55 Transfer of Property Act, 1882",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 8 }
+    },
+    {
+      "key": "outcome",
+      "value": "Specific performance refused; respondents 1 to 3 directed to refund Rs. 3,50,000 to the appellant with interest at 12% per annum from 2.8.1981 to date of payment; contempt petitions and vendors' appeals (CA Nos. 4641-4642) dismissed",
+      "source": { "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf", "page": 23 }
+    }
+  ],
+  "doc_index": [
+    {
+      "file": "saradamani-kandappan-v-s-rajalakshmi-sc-2011.pdf",
+      "title": "Saradamani Kandappan vs S. Rajalakshmi & Ors, Supreme Court of India, judgment dated 4 July 2011",
+      "doc_type": "judgment",
+      "language": "en"
+    }
+  ],
+  "notes": "DRAFT — annotated by AI from the judgment text; REQUIRES HUMAN REVIEW before use as ship-gate ground truth. Source: Indian Kanoon https://indiankanoon.org/doc/834739/ (text re-rendered to a text-based PDF; page numbers refer to the rendered PDF, not the official court copy). Ambiguities: (1) page 17 of the judgment says a further advance of Rs. 1,00,000 was paid on '28.1.1981' — almost certainly a typo for 28.2.1981, which is the date used elsewhere (page 3); (2) the filing date of the injunction suit O.S. No. 1709/1981 is not stated (only the year 1981); (3) the appellant's second reply dated 4.9.1981 and the Supreme Court's interim order dated 11.11.2002 (no-encumbrance order underlying the contempt petitions, page 21) were left out to stay within 15 events; (4) events on page 4 (rejoinder, public notice, 14.11.1981 notices) recite dates from the parties' notices rather than independent findings."
+}

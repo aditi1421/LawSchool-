@@ -1,0 +1,83 @@
+{
+  "matter_id": "criminal-1",
+  "lens": "criminal",
+  "files": ["arnesh-kumar-v-state-of-bihar-sc-2014.pdf"],
+  "events": [
+    {
+      "event_date": "2007-07-01",
+      "description": "Marriage solemnized between the appellant Arnesh Kumar and respondent no. 2 Sweta Kiran",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 1 }
+    },
+    {
+      "event_date": null,
+      "description": "Wife alleged demand of Rupees eight lacs, a Maruti car, an air-conditioner and a television set by her mother-in-law and father-in-law, and that she was driven out of the matrimonial home due to non-fulfilment of the dowry demand",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 1 }
+    },
+    {
+      "event_date": null,
+      "description": "Appellant's application for anticipatory bail rejected, first by the learned Sessions Judge and thereafter by the High Court",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 2 }
+    },
+    {
+      "event_date": null,
+      "description": "Appellant approached the Supreme Court by Special Leave Petition (Crl.) No. 9127 of 2013; leave granted",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 1 }
+    },
+    {
+      "event_date": "2013-10-31",
+      "description": "Supreme Court granted provisional bail to the appellant on certain conditions",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 6 }
+    },
+    {
+      "event_date": "2014-07-02",
+      "description": "Supreme Court allowed the appeal, made the provisional bail order dated 31.10.2013 absolute, and issued directions to police and Magistrates governing arrest in cases punishable up to seven years",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 6 }
+    }
+  ],
+  "facts": [
+    {
+      "key": "case_number",
+      "value": "Criminal Appeal No. 1277 of 2014 (@ Special Leave Petition (Crl.) No. 9127 of 2013), Supreme Court of India",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 1 }
+    },
+    {
+      "key": "parties",
+      "value": "Arnesh Kumar (appellant, husband) vs State of Bihar & Anr; respondent no. 2 is Sweta Kiran, the appellant's wife",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 1 }
+    },
+    {
+      "key": "sections_invoked",
+      "value": "Section 498-A Indian Penal Code, 1860 and Section 4 Dowry Prohibition Act, 1961",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 1 }
+    },
+    {
+      "key": "relief_sought",
+      "value": "Anticipatory bail / protection from arrest, appellant apprehending arrest in the Section 498-A IPC case",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 1 }
+    },
+    {
+      "key": "bench",
+      "value": "Chandramauli Kr. Prasad and Pinaki Chandra Ghose, JJ.",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 1 }
+    },
+    {
+      "key": "key_directions",
+      "value": "State Governments to instruct police not to automatically arrest in Section 498-A IPC cases; arrest only after satisfaction under Section 41(1)(b) CrPC recorded on a check list; Magistrates to authorise detention only after recording satisfaction",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 5 }
+    },
+    {
+      "key": "outcome",
+      "value": "Appeal allowed; provisional bail order dated 31.10.2013 made absolute; directions issued, applicable to all offences punishable with imprisonment up to seven years",
+      "source": { "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf", "page": 6 }
+    }
+  ],
+  "doc_index": [
+    {
+      "file": "arnesh-kumar-v-state-of-bihar-sc-2014.pdf",
+      "title": "Arnesh Kumar vs State of Bihar & Anr, Supreme Court of India, judgment dated 2 July 2014",
+      "doc_type": "judgment",
+      "language": "en"
+    }
+  ],
+  "notes": "DRAFT — annotated by AI from the judgment text; REQUIRES HUMAN REVIEW before use as ship-gate ground truth. Source: Indian Kanoon https://indiankanoon.org/doc/2982624/ (text re-rendered to a text-based PDF; page numbers refer to the rendered PDF, not the official court copy). Ambiguities: the judgment gives no dates for the FIR/complaint or for the Sessions Judge and High Court anticipatory-bail rejections; chronology of dated events is thin because the judgment is mostly guideline-setting."
+}

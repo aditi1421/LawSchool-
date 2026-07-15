@@ -1,0 +1,108 @@
+{
+  "matter_id": "civil-2",
+  "lens": "civil",
+  "files": ["vidhyadhar-v-manikrao-sc-1999.pdf"],
+  "events": [
+    {
+      "event_date": "1971-03-24",
+      "description": "Defendant No. 2 executed a document styled 'Kararkharedi' (mortgage by conditional sale) in favour of defendant No. 1 for Rs. 1,500 and delivered possession, with a stipulation that if the amount was returned before 15th March 1973 the property would be given back",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1973-06-05",
+      "description": "Notice sent by defendant No. 2 to defendant No. 1 (after defendant No. 1 did not accept the tendered amount)",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1973-06-07",
+      "description": "Defendant No. 2 sent the amount to defendant No. 1 by money order, which was refused by defendant No. 1",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1973-06-19",
+      "description": "Defendant No. 2 transferred the suit land to the plaintiff for Rs. 5,000 by registered sale deed",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1973-12-20",
+      "description": "Defendant No. 2 filed a one-line written statement in the trial court admitting the plaintiff's suit, supported by an affidavit of the same date",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 4 }
+    },
+    {
+      "event_date": "1975-04-29",
+      "description": "Trial Court decreed the plaintiff's suit for redemption of the mortgage by conditional sale",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1975-10-29",
+      "description": "Under the preliminary decree, the plaintiff was ordered to pay Rs. 1,500 into court on or before 29.10.1975 (or any extended date), upon which defendant No. 1 was to reconvey the property",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 2 }
+    },
+    {
+      "event_date": "1976-09-28",
+      "description": "Lower Appellate Court upheld the Trial Court's decree by its judgment",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1991-05-03",
+      "description": "High Court, by the impugned judgment in second appeal, set aside both lower court judgments and directed restoration of the land to defendant No. 2 with instalment repayments of Rs. 800 to defendant No. 1 and Rs. 500 to the plaintiff",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1999-03-17",
+      "description": "Supreme Court allowed the appeal, set aside the High Court's judgment, and restored the judgment and decree of the Trial Court as upheld by the Lower Appellate Court, without costs",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 14 }
+    }
+  ],
+  "facts": [
+    {
+      "key": "parties",
+      "value": "Plaintiff/appellant: Vidhyadhar Vishnupant Ratnaparkhi; Defendant No. 1: Manikrao Babarao Deshmukh (mortgagee/contesting respondent); Defendant No. 2: Pandu Ganu Bhalerao (original owner/vendor)",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 4 }
+    },
+    {
+      "key": "suit_number",
+      "value": "R.C.S. No. 195/73 in the Court of Civil Judge Senior Division, Buldana",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 3 }
+    },
+    {
+      "key": "suit_property",
+      "value": "4.04 acres of land of survey plot No. 15 of Kasba Amdapur, District Buldana (whole plot measures 16.09 acres)",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 1 }
+    },
+    {
+      "key": "relief_claimed",
+      "value": "Redemption of the mortgage by conditional sale, or in the alternative a decree for specific performance of the contract for repurchase",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 1 }
+    },
+    {
+      "key": "consideration_amounts",
+      "value": "Kararkharedi (mortgage) of 24.3.1971 for Rs. 1,500, repayable before 15.3.1973; registered sale deed of 19.6.1973 in plaintiff's favour for Rs. 5,000",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 1 }
+    },
+    {
+      "key": "statutes_considered",
+      "value": "Section 58(c) Transfer of Property Act (mortgage by conditional sale), Sections 54 and 55(4)(b) TP Act (sale and unpaid seller's charge), Section 100 CPC (second appeal), Order 16 CPC (witnesses)",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 12 }
+    },
+    {
+      "key": "key_holding",
+      "value": "A party who does not enter the witness box to state his own case on oath and avoids cross-examination invites an adverse presumption that his case is not correct; non-payment of part of the sale price does not invalidate a sale under Section 54 TP Act once title has passed",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 4 }
+    },
+    {
+      "key": "outcome",
+      "value": "Appeal allowed; High Court judgment set aside; Trial Court decree for redemption (as upheld by the Lower Appellate Court) restored; no order as to costs",
+      "source": { "file": "vidhyadhar-v-manikrao-sc-1999.pdf", "page": 14 }
+    }
+  ],
+  "doc_index": [
+    {
+      "file": "vidhyadhar-v-manikrao-sc-1999.pdf",
+      "title": "Vidhyadhar vs Manikrao & Anr, Supreme Court of India, judgment dated 17 March 1999",
+      "doc_type": "judgment",
+      "language": "en"
+    }
+  ],
+  "notes": "DRAFT — annotated by AI from the judgment text; REQUIRES HUMAN REVIEW before use as ship-gate ground truth. Source: Indian Kanoon https://indiankanoon.org/doc/1332419/ (text re-rendered to a text-based PDF; page numbers refer to the rendered PDF, not the official court copy). Ambiguities: (1) issue No. 4 as framed by the Trial Court (page 2) says 'prior to 15.3.71', apparently a typo for the 15.3.1973 repurchase deadline stipulated in the Kararkharedi (page 1); (2) the exact date of institution of the suit is not stated (suit number indicates 1973); (3) the 17.3.1999 judgment date appears only in the Indian Kanoon header on page 1, while the operative outcome is on page 14; (4) the key_holding on adverse presumption is developed across pages 4-5 — page 4 is cited as where the finding on defendant No. 1 avoiding the witness box appears."
+}
