@@ -5,7 +5,6 @@ import os
 import threading
 from functools import lru_cache
 from datetime import date
-from pathlib import Path
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request, Response, UploadFile
 from fastapi.concurrency import run_in_threadpool
@@ -23,8 +22,6 @@ from pipeline.jobs import (
     reconcile_stale_jobs,
     run_job,
 )
-from pipeline.llm import GenerationTimeout, OllamaUnavailable
-from pipeline.llm.ollama import RecordTooLongForModel
 from pipeline.db.repository import MatterRepository
 from pipeline.embeddings import get_embedder
 from pipeline.ingest.matter import DocumentRecord, MatterManifest
@@ -336,8 +333,17 @@ def _run_artifacts_job(job_id: str, matter_id: str) -> None:
         return (
             {
                 "violations": [
-                    {"kind": v.kind, "artifact": v.artifact, "claim": v.claim,
-                     "cite": v.cite.model_dump()}
+                    {
+                        "kind": v.kind,
+                        "artifact": v.artifact,
+                        "claim": v.claim,
+                        # Grounding names one bad cite; fidelity names the
+                        # figure the record does not support.
+                        "cite": getattr(v, "cite", None).model_dump()
+                        if getattr(v, "cite", None)
+                        else None,
+                        "asserted": getattr(v, "asserted", None),
+                    }
                     for v in violations
                 ]
             },
@@ -373,6 +379,9 @@ def query_matter(matter_id: str, req: QueryRequest) -> GroundedAnswer:
 class GenerateDraftRequest(BaseModel):
     doc_type: str  # DraftType value
     instructions: str = ""
+    # An existing synopsis_and_list_of_dates draft for the SLP to consume as
+    # its component instead of generating one afresh.
+    synopsis_draft_id: str | None = None
 
 
 class DraftResponse(BaseModel):
@@ -384,7 +393,7 @@ class DraftResponse(BaseModel):
 @app.post("/matters/{matter_id}/drafts", status_code=202)
 def create_draft(matter_id: str, req: GenerateDraftRequest, background: BackgroundTasks) -> JobResponse:
     """Queue drafting and return immediately; poll GET /jobs/{job_id}."""
-    from pipeline.drafting import DraftType
+    from pipeline.drafting import COMPOSED_TYPES, DraftType
 
     store = get_store()
     try:
@@ -397,37 +406,108 @@ def create_draft(matter_id: str, req: GenerateDraftRequest, background: Backgrou
         raise HTTPException(status_code=422, detail=f"unknown doc_type: {req.doc_type}")
     if not store.matter_chunks(matter_id):
         raise HTTPException(status_code=422, detail="matter has no readable content")
-
-    try:
-        job_id = create_job(
-            matter_id, "draft", {"doc_type": doc_type.value, "instructions": req.instructions}
+    if doc_type in COMPOSED_TYPES and store.load_artifacts(matter_id) is None:
+        # The List of Dates is a rendering of the verified chronology, never a
+        # fresh extraction — without artifacts there is nothing to render.
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                f"A {doc_type.value.replace('_', ' ')} is assembled from the verified "
+                "chronology — generate the case brief for this matter first."
+            ),
         )
+    if req.synopsis_draft_id is not None:
+        try:
+            component = store.load_draft(matter_id, req.synopsis_draft_id)
+        except FileNotFoundError:
+            raise HTTPException(status_code=404, detail="synopsis draft not found")
+        if component.get("doc_type") != DraftType.SYNOPSIS_LOD.value:
+            raise HTTPException(
+                status_code=422,
+                detail="synopsis_draft_id must point at a synopsis & list of dates draft",
+            )
+
+    params = {"doc_type": doc_type.value, "instructions": req.instructions}
+    if req.synopsis_draft_id is not None:
+        # A failed job must still say which component it was asked to build on.
+        params["synopsis_draft_id"] = req.synopsis_draft_id
+    try:
+        job_id = create_job(matter_id, "draft", params)
     except JobAlreadyRunning as e:
         raise HTTPException(status_code=409, detail=str(e))
 
-    background.add_task(_run_draft_job, job_id, matter_id, doc_type.value, req.instructions)
+    background.add_task(
+        _run_draft_job, job_id, matter_id, doc_type.value, req.instructions,
+        req.synopsis_draft_id,
+    )
     return JobResponse(job_id=job_id, status="queued")
 
 
-def _run_draft_job(job_id: str, matter_id: str, doc_type: str, instructions: str) -> None:
-    from pipeline.drafting import DraftType, LLMDraftModel, generate_draft
+def _violation_dict(v) -> dict:
+    return {
+        "kind": v.kind,
+        "paragraph": v.paragraph,
+        "cite": v.cite.model_dump() if v.cite else None,
+        "asserted": v.asserted,
+        "where": v.where,
+    }
+
+
+def _run_draft_job(
+    job_id: str,
+    matter_id: str,
+    doc_type: str,
+    instructions: str,
+    synopsis_draft_id: str | None = None,
+) -> None:
+    from pipeline.drafting import (
+        COMPOSED_TYPES,
+        DraftDocument,
+        DraftType,
+        LLMDraftModel,
+        generate_draft,
+        get_support_judge,
+    )
+    from pipeline.models import MatterArtifacts as Artifacts
 
     def work():
         store = get_store()
         model = LLMDraftModel()
-        draft, violations = generate_draft(
-            matter_id, DraftType(doc_type), store.matter_chunks(matter_id), model,
+        kind = DraftType(doc_type)
+
+        artifacts = None
+        if kind in COMPOSED_TYPES or kind is DraftType.WRIT_PETITION:
+            data = store.load_artifacts(matter_id)
+            artifacts = Artifacts.model_validate(data) if data else None
+
+        component = None
+        if synopsis_draft_id is not None:
+            component = DraftDocument.model_validate(
+                store.load_draft(matter_id, synopsis_draft_id)
+            )
+
+        draft, run = generate_draft(
+            matter_id,
+            kind,
+            store.matter_chunks(matter_id),
+            model,
             instructions=instructions,
+            artifacts=artifacts,
+            judge=get_support_judge(),
+            synopsis_component=component,
         )
         draft_id = store.save_draft(matter_id, doc_type, draft.model_dump(mode="json"))
         return (
             {
                 "draft_id": draft_id,
-                "violations": [
-                    {"kind": v.kind, "paragraph": v.paragraph,
-                     "cite": v.cite.model_dump() if v.cite else None}
-                    for v in violations
-                ],
+                # A converged draft has no outstanding paragraph violations;
+                # what remains to flag is chronology repairs made while
+                # deriving the List of Dates (a stale saved brief).
+                "violations": [_violation_dict(v) for v in run.lod_violations],
+                "attempts": run.total_attempts,
+                "revised": run.revised,
+                "judge": run.judge,
+                "rounds": [len(r) for r in run.rounds],
             },
             model._llm.name,
         )

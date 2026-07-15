@@ -249,6 +249,63 @@ def test_draft_returns_a_job(api_client, tmp_path: Path, monkeypatch: pytest.Mon
     assert job["params"] == {"doc_type": "legal_notice", "instructions": "demand possession"}
 
 
+def test_composed_drafts_require_the_verified_chronology(
+    api_client, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An SLP's List of Dates is a rendering of the verified chronology —
+    without artifacts there is nothing to render, and the API says so."""
+    monkeypatch.setattr("pipeline.api._run_draft_job", lambda *a: None)
+    matter_id = api_client.post("/matters", json={"title": "M"}).json()["matter_id"]
+    pdf = tmp_path / "plaint.pdf"
+    make_text_pdf(pdf, [PLAINT_TEXT])
+    _upload(api_client, matter_id, "plaint.pdf", pdf)
+
+    for doc_type in ("slp", "synopsis_and_list_of_dates"):
+        resp = api_client.post(f"/matters/{matter_id}/drafts", json={"doc_type": doc_type})
+        assert resp.status_code == 422
+        assert "generate the case brief" in resp.json()["detail"]
+
+    # Once artifacts exist, the composed types queue. (A writ petition would
+    # queue even without them — it drafts from the record directly.)
+    from pipeline.api import get_store
+
+    get_store().save_artifacts(matter_id, {"matter_id": matter_id, "chronology": []})
+    resp = api_client.post(
+        f"/matters/{matter_id}/drafts", json={"doc_type": "synopsis_and_list_of_dates"}
+    )
+    assert resp.status_code == 202
+
+
+def test_slp_component_reference_is_checked(api_client, tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr("pipeline.api._run_draft_job", lambda *a: None)
+    matter_id = api_client.post("/matters", json={"title": "M"}).json()["matter_id"]
+    pdf = tmp_path / "plaint.pdf"
+    make_text_pdf(pdf, [PLAINT_TEXT])
+    _upload(api_client, matter_id, "plaint.pdf", pdf)
+
+    from pipeline.api import get_store
+
+    get_store().save_artifacts(matter_id, {"matter_id": matter_id, "chronology": []})
+
+    missing = api_client.post(
+        f"/matters/{matter_id}/drafts",
+        json={"doc_type": "slp", "synopsis_draft_id": "nope"},
+    )
+    assert missing.status_code == 404
+
+    wrong_kind = get_store().save_draft(
+        matter_id,
+        "legal_notice",
+        {"matter_id": matter_id, "doc_type": "legal_notice", "title": "LN"},
+    )
+    resp = api_client.post(
+        f"/matters/{matter_id}/drafts",
+        json={"doc_type": "slp", "synopsis_draft_id": wrong_kind},
+    )
+    assert resp.status_code == 422
+    assert "synopsis" in resp.json()["detail"]
+
+
 def test_drafts_empty_and_404s(api_client) -> None:
     matter_id = api_client.post("/matters", json={"title": "M"}).json()["matter_id"]
     assert api_client.get(f"/matters/{matter_id}/drafts").json() == []

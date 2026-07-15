@@ -1,7 +1,6 @@
 """Drafting workflow tests with a fake LLM — cite verification, placeholders, export."""
 
 from datetime import date
-from pathlib import Path
 
 from pipeline.drafting import DraftDocument, DraftParagraph, DraftType, generate_draft, validate_draft
 from pipeline.drafting.export import draft_to_docx

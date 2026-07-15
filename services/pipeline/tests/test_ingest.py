@@ -4,7 +4,6 @@ Pure — no database. Matter storage lives in test_repository.py and the HTTP
 surface in test_api.py.
 """
 
-from datetime import date
 from pathlib import Path
 
 import fitz
