@@ -35,6 +35,20 @@ def storage_key(matter_id: str, filename: str) -> str:
     return f"matters/{matter_id}/{filename}"
 
 
+def _derive_ocr_status(pages: list[PageExtract], needs_ocr: list[int]) -> OcrStatus:
+    """Read the status off the pages themselves rather than trusting a label.
+
+    'not_needed' and 'done' both mean "nothing left to read", but they are not
+    the same thing to a lawyer: 'done' says these pages came from OCR and may
+    carry OCR error, which is why low-confidence claims get flagged downstream.
+    """
+    if needs_ocr:
+        return "pending"
+    if any(p.method == "ocr" for p in pages):
+        return "done"
+    return "not_needed"
+
+
 def _to_record(doc: DocumentRow) -> DocumentRecord:
     return DocumentRecord(
         file=doc.filename,
@@ -129,7 +143,7 @@ class MatterRepository:
         head = "\n".join(p.text for p in pages[:3])
         doc_type = classify_doc_type(head)
         needs_ocr = [p.page for p in pages if p.method == "needs_ocr"]
-        status: OcrStatus = ocr_status or ("pending" if needs_ocr else "not_needed")
+        status: OcrStatus = ocr_status or _derive_ocr_status(pages, needs_ocr)
 
         chunks = chunk_pages(matter_id, filename, doc_type, pages)
         vectors = self._embed([c.text for c in chunks])

@@ -11,41 +11,17 @@ from datetime import date
 from pathlib import Path
 
 import pytest
-from sqlalchemy import text
-
-from pipeline.db.engine import get_engine, session_scope
-from pipeline.db.models import Base, ChunkRow, DocumentRow
+from pipeline.db.engine import session_scope
+from pipeline.db.models import ChunkRow, DocumentRow
 from pipeline.db.repository import MatterRepository
 from pipeline.models import DocType
 from pipeline.storage import LocalStorage
 
+from tests.conftest import requires_db
 from tests.test_ingest import PLAINT_TEXT, ORDER_TEXT, make_scan_pdf, make_text_pdf
 
 
-def _db_available() -> bool:
-    try:
-        with get_engine().connect() as conn:
-            conn.execute(text("SELECT 1"))
-        return True
-    except Exception:
-        return False
-
-
-pytestmark = pytest.mark.skipif(
-    not _db_available(), reason="Postgres not reachable — run `docker compose up -d`"
-)
-
-
-@pytest.fixture
-def repo(tmp_path: Path):
-    """A clean schema per test — no cross-test bleed."""
-    engine = get_engine()
-    with engine.begin() as conn:
-        conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
-    Base.metadata.drop_all(engine)
-    Base.metadata.create_all(engine)
-    yield MatterRepository(storage=LocalStorage(tmp_path / "blobs"), embedder=None)
-    Base.metadata.drop_all(engine)
+pytestmark = requires_db
 
 
 class FakeEmbedder:
@@ -233,3 +209,30 @@ def test_artifacts_and_drafts_roundtrip(repo: MatterRepository, tmp_path: Path) 
     assert repo.load_draft(m.matter_id, did)["title"] == "LEGAL NOTICE"
     listing = repo.list_drafts(m.matter_id)
     assert listing[0]["draft_id"] == did and listing[0]["missing_info"] == 1
+
+
+def test_ocr_status_is_derived_from_pages_not_a_label(repo: MatterRepository, tmp_path: Path) -> None:
+    """'done' and 'not_needed' both mean nothing-left-to-read, but only 'done'
+    tells a lawyer the text came from OCR and may carry OCR error."""
+    m = repo.create("M", today=date(2026, 7, 15))
+    pdf = tmp_path / "scan.pdf"
+    make_scan_pdf(pdf)
+    key = "matters/%s/scan.pdf" % m.matter_id
+    repo.storage.put(key, pdf.read_bytes())
+
+    from pipeline.ingest.extract import PageExtract
+    from pipeline.models import Language
+
+    ocrd = [
+        PageExtract(page=1, text="A legal notice was served.", method="ocr",
+                    confidence=0.6, language=Language.ENGLISH)
+    ]
+    rec = repo._persist_document(m.matter_id, "scan.pdf", key, ocrd)
+    assert rec.ocr_status == "done"  # not "not_needed"
+
+    digital = [
+        PageExtract(page=1, text="A legal notice was served.", method="text_layer",
+                    confidence=1.0, language=Language.ENGLISH)
+    ]
+    rec = repo._persist_document(m.matter_id, "digital.pdf", key, digital)
+    assert rec.ocr_status == "not_needed"

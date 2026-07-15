@@ -5,10 +5,10 @@ from pathlib import Path
 
 from pipeline.drafting import DraftDocument, DraftParagraph, DraftType, generate_draft, validate_draft
 from pipeline.drafting.export import draft_to_docx
-from pipeline.drafting.store import list_drafts, load_draft, save_draft
-from pipeline.ingest.matter import MatterStore
+from pipeline.db.repository import MatterRepository
 from pipeline.models import Citation
 
+from tests.conftest import requires_db
 from tests.test_artifacts import CHUNKS  # plaint.pdf p.3/p.4 + low-OCR scan.pdf p.1
 
 
@@ -103,16 +103,16 @@ def test_draft_docx_export_and_missing_info_notes() -> None:
     assert len(blob) > 1000
 
 
-def test_draft_store_roundtrip(tmp_path: Path) -> None:
-    store = MatterStore(tmp_path / "matters")
-    manifest = store.create("Test", today=date(2026, 7, 15))
-    draft = base_draft([para("x [● y]")]).model_copy(update={"matter_id": manifest.matter_id})
+@requires_db
+def test_draft_store_roundtrip(repo: MatterRepository) -> None:
+    m = repo.create("Test", today=date(2026, 7, 15))
+    draft = base_draft([para("x [● y]")]).model_copy(update={"matter_id": m.matter_id})
 
-    draft_id = save_draft(store, draft)
-    loaded = load_draft(store, manifest.matter_id, draft_id)
+    draft_id = repo.save_draft(m.matter_id, draft.doc_type.value, draft.model_dump(mode="json"))
+    loaded = DraftDocument.model_validate(repo.load_draft(m.matter_id, draft_id))
     assert loaded.title == "LEGAL NOTICE"
 
-    listing = list_drafts(store, manifest.matter_id)
+    listing = repo.list_drafts(m.matter_id)
     assert listing[0]["draft_id"] == draft_id
     assert listing[0]["doc_type"] == "legal_notice"
     assert listing[0]["missing_info"] == 1

@@ -3,18 +3,22 @@
 import logging
 import os
 import threading
+from functools import lru_cache
 from datetime import date
 from pathlib import Path
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request, Response, UploadFile
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from pipeline.artifacts.generate import AnthropicArtifactModel
 from pipeline.export import artifacts_to_docx
 from pipeline.ingest.extract import UnreadablePdf
-from pipeline.ingest.matter import DocumentRecord, MatterManifest, MatterStore
+from pipeline.db.repository import MatterRepository
+from pipeline.embeddings import get_embedder
+from pipeline.ingest.matter import DocumentRecord, MatterManifest
+from pipeline.storage import get_storage
 from pipeline.models import MatterArtifacts
 from pipeline.query import AnthropicQueryModel, GroundedAnswer, answer_question
 from pipeline.service import load_artifacts, retrieve, run_artifacts
@@ -23,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="lawschool pipeline")
 
-# Dev CORS — the Next.js app on :3000 talks to this service on :8000.
+# Dev CORS — the Next.js app on :3000 talks to this service on :8010.
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 from starlette.middleware.base import BaseHTTPMiddleware  # noqa: E402
 
@@ -62,9 +66,14 @@ app.add_middleware(
 )
 
 
-def get_store() -> MatterStore:
-    root = Path(os.environ.get("LAWSCHOOL_DATA_DIR", "data/matters"))
-    return MatterStore(root)
+@lru_cache(maxsize=1)
+def get_store() -> MatterRepository:
+    """The matter repository: Postgres + object storage.
+
+    Cached — the embedder may load a local model, which must not happen per
+    request.
+    """
+    return MatterRepository(storage=get_storage(), embedder=get_embedder())
 
 
 _ocr_engine = None
@@ -85,14 +94,14 @@ def get_ocr():
     return _ocr_engine
 
 
-def _ocr_worker(data_dir: str, matter_id: str, filename: str) -> None:
+def _ocr_worker(matter_id: str, filename: str) -> None:
     """Background OCR job.
 
     Runs in a worker thread (FastAPI runs sync background tasks in its
     threadpool), so the event loop stays free to serve other requests while
     pages are being read. Never raise into the task runner.
     """
-    store = MatterStore(Path(data_dir))
+    store = get_store()
     try:
         with _ocr_lock:
             engine = get_ocr()
@@ -156,10 +165,22 @@ async def upload_file(
     except UnreadablePdf as exc:
         raise HTTPException(status_code=422, detail=str(exc))
     if record.ocr_status == "pending":
-        background.add_task(
-            _ocr_worker, str(store.root), matter_id, file.filename
-        )
+        background.add_task(_ocr_worker, matter_id, file.filename)
     return record
+
+
+@app.delete("/matters/{matter_id}/files/{filename}", status_code=204)
+def delete_file(matter_id: str, filename: str) -> None:
+    """Remove one document from a matter (wrong file, superseded copy)."""
+    store = get_store()
+    try:
+        store.get(matter_id)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="matter not found")
+    try:
+        store.remove_document(matter_id, filename)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="file not found in this matter")
 
 
 @app.post("/matters/{matter_id}/files/{filename}/ocr", status_code=202)
@@ -176,7 +197,7 @@ def start_ocr(matter_id: str, filename: str, background: BackgroundTasks) -> dic
     if doc.ocr_status == "running":
         return {"ocr_status": "running"}
     store.set_ocr_status(matter_id, filename, "pending")
-    background.add_task(_ocr_worker, str(store.root), matter_id, filename)
+    background.add_task(_ocr_worker, matter_id, filename)
     return {"ocr_status": "pending"}
 
 
@@ -190,13 +211,22 @@ def delete_matter(matter_id: str) -> None:
 
 
 @app.get("/matters/{matter_id}/files/{filename}")
-def get_file(matter_id: str, filename: str) -> FileResponse:
-    """Serve a source PDF for the split-view verifier."""
-    store = get_store()
-    path = (store.files_dir(matter_id) / filename).resolve()
-    if not path.is_relative_to(store.files_dir(matter_id).resolve()) or not path.exists():
+def get_file(matter_id: str, filename: str) -> Response:
+    """Serve a source PDF for the split-view verifier.
+
+    Streamed from object storage. In production this should hand back a
+    short-lived signed URL instead, so bytes go client->storage directly and
+    the API is not in the data path.
+    """
+    try:
+        content = get_store().file_bytes(matter_id, filename)
+    except Exception:
         raise HTTPException(status_code=404, detail="file not found")
-    return FileResponse(path, media_type="application/pdf")
+    return Response(
+        content=content,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'inline; filename="{filename}"'},
+    )
 
 
 class ChunkTextResponse(BaseModel):
@@ -213,14 +243,14 @@ def get_chunk_text(
         manifest = store.get(matter_id)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="matter not found")
-    doc = next((d for d in manifest.documents if d.file == file), None)
-    if doc is None:
+    if not any(d.file == file for d in manifest.documents):
         raise HTTPException(status_code=404, detail="file not found")
 
-    from pipeline.structure import chunk_pages
-
-    chunks = chunk_pages(matter_id, file, doc.doc_type, store.load_pages(matter_id, file))
-    on_page = [c for c in chunks if c.location.page == page]
+    on_page = [
+        c
+        for c in store.matter_chunks(matter_id)
+        if c.location.file == file and c.location.page == page
+    ]
     if para is not None:
         exact = [c for c in on_page if c.location.para == para]
         if exact:
@@ -292,8 +322,6 @@ class DraftResponse(BaseModel):
 @app.post("/matters/{matter_id}/drafts")
 def create_draft(matter_id: str, req: GenerateDraftRequest) -> DraftResponse:
     from pipeline.drafting import AnthropicDraftModel, DraftType, generate_draft
-    from pipeline.drafting.store import save_draft
-    from pipeline.service import matter_chunks as _chunks
 
     store = get_store()
     try:
@@ -304,13 +332,13 @@ def create_draft(matter_id: str, req: GenerateDraftRequest) -> DraftResponse:
         doc_type = DraftType(req.doc_type)
     except ValueError:
         raise HTTPException(status_code=422, detail=f"unknown doc_type: {req.doc_type}")
-    chunks = _chunks(store, matter_id)
+    chunks = store.matter_chunks(matter_id)
     if not chunks:
         raise HTTPException(status_code=422, detail="matter has no readable content")
     draft, violations = generate_draft(
         matter_id, doc_type, chunks, AnthropicDraftModel(), instructions=req.instructions
     )
-    draft_id = save_draft(store, draft)
+    draft_id = store.save_draft(matter_id, doc_type.value, draft.model_dump(mode='json'))
     return DraftResponse(
         draft_id=draft_id,
         draft=draft.model_dump(mode="json"),
@@ -327,14 +355,12 @@ def create_draft(matter_id: str, req: GenerateDraftRequest) -> DraftResponse:
 
 @app.get("/matters/{matter_id}/drafts")
 def get_drafts(matter_id: str) -> list[dict]:
-    from pipeline.drafting.store import list_drafts
-
     store = get_store()
     try:
         store.get(matter_id)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="matter not found")
-    return list_drafts(store, matter_id)
+    return store.list_drafts(matter_id)
 
 
 # NOTE: the .docx route must be registered before the plain {draft_id} route —
@@ -342,10 +368,10 @@ def get_drafts(matter_id: str) -> list[dict]:
 @app.get("/matters/{matter_id}/drafts/{draft_id}.docx")
 def export_draft(matter_id: str, draft_id: str) -> Response:
     from pipeline.drafting.export import draft_to_docx
-    from pipeline.drafting.store import load_draft
+    from pipeline.drafting.models import DraftDocument
 
     try:
-        draft = load_draft(get_store(), matter_id, draft_id)
+        draft = DraftDocument.model_validate(get_store().load_draft(matter_id, draft_id))
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="draft not found")
     return Response(
@@ -359,10 +385,8 @@ def export_draft(matter_id: str, draft_id: str) -> Response:
 
 @app.get("/matters/{matter_id}/drafts/{draft_id}")
 def get_draft(matter_id: str, draft_id: str) -> dict:
-    from pipeline.drafting.store import load_draft
-
     try:
-        return load_draft(get_store(), matter_id, draft_id).model_dump(mode="json")
+        return get_store().load_draft(matter_id, draft_id)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="draft not found")
 

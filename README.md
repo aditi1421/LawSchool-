@@ -25,7 +25,12 @@ docs/               Architecture and design docs
 ## Development
 
 - Web: `cd apps/web && npm run dev` (http://localhost:3000)
-- Pipeline API: `cd services/pipeline && uv run fastapi dev src/pipeline/api.py` (http://localhost:8000)
+- Pipeline API: `cd services/pipeline && uv run uvicorn pipeline.api:app --port 8010` (http://127.0.0.1:8010)
+  Port 8010, not 8000: 8000 is commonly taken, and a second listener on it
+  causes intermittent 'cannot reach the backend' errors that look like the
+  API is down. 127.0.0.1 rather than localhost pins IPv4 — `localhost`
+  resolves to both ::1 and 127.0.0.1 and clients disagree about which to use.
+- Database + storage: `docker compose up -d` (Postgres :5433, MinIO :9000)
 - Tests: `cd services/pipeline && uv run pytest tests/`
 - Live end-to-end smoke (one small Claude call): `uv run python scripts/smoke_e2e.py`
 - Ship gate: `uv run python -m pipeline.evals.run` — scores the artifact agent against
