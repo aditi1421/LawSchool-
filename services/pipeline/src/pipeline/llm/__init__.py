@@ -14,10 +14,11 @@ and apply to whatever the model returns.
 
 from pipeline.llm.base import StructuredLLM, get_llm
 from pipeline.llm.claude import ClaudeLLM
-from pipeline.llm.ollama import OllamaLLM, OllamaUnavailable
+from pipeline.llm.ollama import GenerationTimeout, OllamaLLM, OllamaUnavailable
 
 __all__ = [
     "ClaudeLLM",
+    "GenerationTimeout",
     "OllamaLLM",
     "OllamaUnavailable",
     "StructuredLLM",

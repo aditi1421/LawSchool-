@@ -58,7 +58,7 @@ def test_failure_is_recorded_not_raised(repo) -> None:
 def test_second_job_is_refused_while_one_is_live(repo) -> None:
     mid = _matter(repo)
     create_job(mid, "artifacts")
-    with pytest.raises(JobAlreadyRunning, match="already running"):
+    with pytest.raises(JobAlreadyRunning, match="already being generated"):
         create_job(mid, "artifacts")
 
 

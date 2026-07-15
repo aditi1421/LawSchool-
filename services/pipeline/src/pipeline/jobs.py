@@ -53,8 +53,12 @@ def create_job(matter_id: str, kind: JobKind, params: dict | None = None) -> str
                 )
             )
     except IntegrityError as exc:
+        # Read by a lawyer, not a developer: say what is happening, not which
+        # constraint fired.
+        what = "A brief is already being generated" if kind == "artifacts" else "A draft is already being generated"
         raise JobAlreadyRunning(
-            f"a {kind} job is already running for this matter — wait for it to finish"
+            f"{what} for this matter. It will finish on its own — you can leave "
+            f"this page and come back."
         ) from exc
     return job_id
 

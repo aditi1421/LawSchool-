@@ -1,16 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ApiError, createDraft, draftExportUrl, getDraft, listDrafts } from "@/lib/api";
+import {
+  ApiError,
+  createDraft,
+  draftExportUrl,
+  getDraft,
+  listDrafts,
+  listJobs,
+} from "@/lib/api";
+import { isJobLive } from "@/lib/types";
 import type {
   Citation,
   DraftDocType,
   DraftDocument,
   DraftParagraph,
   DraftSummary,
-  DraftViolation,
+  JobProvider,
+  JobRecord,
 } from "@/lib/types";
+import { useJob, useJobElapsed } from "@/lib/useJob";
 import CitationChip from "./CitationChip";
+import ProviderChip from "./ProviderChip";
 
 const DOC_TYPES: { value: DraftDocType; label: string }[] = [
   { value: "legal_notice", label: "Legal notice" },
@@ -26,6 +37,19 @@ const DOC_TYPE_LABELS: Record<DraftDocType, string> = Object.fromEntries(
 /* Placeholders the drafter could not fill from the record look like
    "[● name of addressee ]" — emphasize them so they cannot be missed. */
 const PLACEHOLDER_RE = /(\[●[^\]]*\])/;
+
+/** Which model wrote each draft, by draft id, read off the matter's job
+ *  history. The job record is the only thing that knows — a draft on its own
+ *  does not carry its author. */
+function providersByDraft(jobs: JobRecord[]): Record<string, JobProvider> {
+  const map: Record<string, JobProvider> = {};
+  for (const job of jobs) {
+    if (job.kind !== "draft" || job.status !== "succeeded") continue;
+    const draftId = job.result?.draft_id;
+    if (draftId && job.provider) map[draftId] = job.provider;
+  }
+  return map;
+}
 
 function DraftText({ text }: { text: string }) {
   const parts = text.split(PLACEHOLDER_RE);
@@ -95,11 +119,13 @@ function DraftView({
   matterId,
   draftId,
   draft,
+  provider,
   onJump,
 }: {
   matterId: string;
   draftId: string;
   draft: DraftDocument;
+  provider: JobProvider | null;
   onJump: (cite: Citation) => void;
 }) {
   let n = 0;
@@ -113,6 +139,11 @@ function DraftView({
       <p className="mt-2 text-center font-display text-sm font-bold text-ink">
         {draft.title}
       </p>
+      {provider && (
+        <p className="mt-1.5 text-center">
+          <ProviderChip provider={provider} />
+        </p>
+      )}
 
       <div className="mt-4 space-y-3">
         {draft.paragraphs.map((para, i) => (
@@ -183,15 +214,38 @@ export default function DraftPanel({
   const [docType, setDocType] = useState<DraftDocType>("legal_notice");
   const [instructions, setInstructions] = useState("");
 
-  const [generating, setGenerating] = useState(false);
-  const [elapsed, setElapsed] = useState(0);
-  const [violations, setViolations] = useState<DraftViolation[]>([]);
+  const [draftJobId, setDraftJobId] = useState<string | null>(null);
+  const [starting, setStarting] = useState(false);
 
   const [openId, setOpenId] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [loaded, setLoaded] = useState<Record<string, DraftDocument>>({});
+  /** Which model wrote each draft, by draft id. Kept per draft rather than as
+   *  one "last provider": the list mixes runs, and a document has to be
+   *  attributable to the model that actually wrote it, not the latest one. */
+  const [providers, setProviders] = useState<Record<string, JobProvider>>({});
 
   const [error, setError] = useState<string | null>(null);
+
+  const { job: draftJob, isLive: draftLive } = useJob(draftJobId);
+  const elapsed = useJobElapsed(draftJob, draftLive);
+  const generating = starting || draftLive;
+
+  // What this session's run flagged, straight off the job record. Starting a
+  // new one clears it, which is right: the count belonged to the old document.
+  const finished =
+    draftJob?.kind === "draft" && draftJob.status === "succeeded"
+      ? draftJob
+      : null;
+  const violations = finished?.result?.violations ?? [];
+
+  // While a resumed job runs, the label has to come from the job's own params
+  // — the dropdown in this tab may never have been touched.
+  const runningType =
+    (draftJob?.kind === "draft" ? draftJob.params.doc_type : null) ?? docType;
+
+  const draftFailure =
+    draftJob?.status === "failed" ? draftJob.error : null;
 
   useEffect(() => {
     let cancelled = false;
@@ -212,37 +266,99 @@ export default function DraftPanel({
     };
   }, [matterId]);
 
+  // Drafting outlives the tab that asked for it: adopt anything still running,
+  // and attribute the drafts already on the list to the model that wrote each.
   useEffect(() => {
-    if (!generating) return;
-    const t = setInterval(() => setElapsed((s) => s + 1), 1000);
-    return () => clearInterval(t);
-  }, [generating]);
+    let cancelled = false;
+    listJobs(matterId, "draft")
+      .then((jobs) => {
+        if (cancelled) return;
+        setProviders(providersByDraft(jobs));
+        const live = jobs.find(isJobLive);
+        if (live) setDraftJobId(live.job_id); // polling resumes from here
+
+        // A draft that failed while the tab was closed is still news — see the
+        // same reasoning in the matter page. Newest job only, so a later
+        // success clears it.
+        const newest = jobs[0];
+        if (newest && newest.status === "failed" && newest.error) {
+          setError(newest.error);
+        }
+      })
+      .catch(() => {
+        // The panel still works without the job history; drafting will report
+        // any real problem when it is asked for one.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [matterId]);
+
+  // The draft landed. Put it on the list and open it to the page.
+  useEffect(() => {
+    if (draftJob?.kind !== "draft" || draftJob.status !== "succeeded") return;
+    const draftId = draftJob.result?.draft_id;
+    if (!draftId) return;
+
+    let cancelled = false;
+    Promise.all([
+      listDrafts(matterId),
+      getDraft(matterId, draftId),
+      listJobs(matterId, "draft"),
+    ])
+      .then(([list, draft, jobs]) => {
+        if (cancelled) return;
+        setDrafts(list);
+        setLoaded((prev) => ({ ...prev, [draftId]: draft }));
+        setProviders(providersByDraft(jobs));
+        setOpenId(draftId);
+      })
+      .catch((err) => {
+        if (!cancelled)
+          setError(
+            err instanceof Error ? err.message : "Failed to load the draft.",
+          );
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [draftJob, matterId]);
 
   const draftDocument = async () => {
     if (generating) return;
-    setElapsed(0);
-    setGenerating(true);
+    setStarting(true);
     setError(null);
     try {
-      const res = await createDraft(matterId, docType, instructions.trim());
-      setDrafts((prev) => [
-        {
-          draft_id: res.draft_id,
-          doc_type: res.draft.doc_type,
-          title: res.draft.title,
-          paragraphs: res.draft.paragraphs.length,
-          missing_info: res.draft.missing_info.length,
-        },
-        ...prev.filter((d) => d.draft_id !== res.draft_id),
-      ]);
-      setLoaded((prev) => ({ ...prev, [res.draft_id]: res.draft }));
-      setViolations(res.violations);
-      setOpenId(res.draft_id);
+      const { job_id } = await createDraft(
+        matterId,
+        docType,
+        instructions.trim(),
+      );
+      setDraftJobId(job_id);
+      // The job owns the instructions now — free the box for the next one.
       setInstructions("");
     } catch (err) {
+      // 409: this matter already has a draft being written, here or in another
+      // tab. The user wants that document, not an error — follow it instead.
+      if (err instanceof ApiError && err.status === 409) {
+        const live = await listJobs(matterId, "draft")
+          .then((jobs) => jobs.find(isJobLive))
+          .catch(() => undefined);
+        if (live) {
+          setDraftJobId(live.job_id);
+          return;
+        }
+        // It finished between the refusal and the lookup — show it rather than
+        // repeating the server's "already running".
+        setError("A draft just finished for this matter — it is in the list below.");
+        void listDrafts(matterId)
+          .then(setDrafts)
+          .catch(() => {});
+        return;
+      }
       setError(err instanceof Error ? err.message : "Drafting failed.");
     } finally {
-      setGenerating(false);
+      setStarting(false);
     }
   };
 
@@ -279,7 +395,7 @@ export default function DraftPanel({
           <div className="mt-2">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-ink-soft">
-                Drafting {DOC_TYPE_LABELS[docType].toLowerCase()}…
+                Drafting {DOC_TYPE_LABELS[runningType].toLowerCase()}…
               </p>
               <span className="font-mono text-xs text-ink-muted">
                 {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, "0")}
@@ -319,6 +435,7 @@ export default function DraftPanel({
             />
             <button
               type="submit"
+              disabled={generating}
               className="shrink-0 rounded-sm bg-accent px-4 py-2 text-sm font-semibold text-panel transition-colors hover:bg-accent-deep disabled:cursor-not-allowed disabled:opacity-50"
             >
               Draft
@@ -338,7 +455,14 @@ export default function DraftPanel({
           </span>
         )}
 
-        {error && <p className="mt-2 text-xs text-oxblood">{error}</p>}
+        {/* A failed job's message is written for the person reading it — the
+            record too long for the local model, Ollama not running, no credits
+            left. It is shown word for word. */}
+        {(draftFailure ?? error) && (
+          <p className="mt-2 whitespace-pre-line rounded-sm border border-oxblood/30 bg-oxblood-wash px-3 py-2 text-xs leading-relaxed text-oxblood">
+            {draftFailure ?? error}
+          </p>
+        )}
       </div>
 
       {drafts.length > 0 && (
@@ -378,6 +502,7 @@ export default function DraftPanel({
                     matterId={matterId}
                     draftId={d.draft_id}
                     draft={loaded[d.draft_id]}
+                    provider={providers[d.draft_id] ?? null}
                     onJump={onJump}
                   />
                 )}

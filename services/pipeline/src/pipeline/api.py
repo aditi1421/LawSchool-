@@ -23,7 +23,7 @@ from pipeline.jobs import (
     reconcile_stale_jobs,
     run_job,
 )
-from pipeline.llm import OllamaUnavailable
+from pipeline.llm import GenerationTimeout, OllamaUnavailable
 from pipeline.llm.ollama import RecordTooLongForModel
 from pipeline.db.repository import MatterRepository
 from pipeline.embeddings import get_embedder

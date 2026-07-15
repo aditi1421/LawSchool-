@@ -107,11 +107,6 @@ export interface Violation {
   cite: Citation | null;
 }
 
-export interface GenerateArtifactsResponse {
-  artifacts: MatterArtifacts;
-  violations: Violation[];
-}
-
 export interface QueryResponse {
   answer: string;
   cites: Citation[];
@@ -155,8 +150,61 @@ export interface DraftViolation {
   cite: Citation | null;
 }
 
-export interface CreateDraftResponse {
+/* ── Jobs ─────────────────────────────────────────────────────────────
+   Generation takes minutes, so the server does not hold the request open:
+   POST queues a job and returns its id, and the result is written to the
+   matter whether or not this browser is still listening. */
+
+export type JobKind = "artifacts" | "draft";
+
+export type JobStatus = "queued" | "running" | "succeeded" | "failed";
+
+/** Which model wrote the output. Local and hosted are not interchangeable —
+ *  a reader has to be told which one they are reading. */
+export type JobProvider = "claude" | "ollama";
+
+export interface ArtifactsJobResult {
+  violations: Violation[];
+}
+
+export interface DraftJobResult {
   draft_id: string;
-  draft: DraftDocument;
   violations: DraftViolation[];
+}
+
+interface JobRecordBase {
+  job_id: string;
+  matter_id: string;
+  status: JobStatus;
+  error: string | null;
+  provider: JobProvider | null;
+  created_at: string | null;
+  started_at: string | null;
+  finished_at: string | null;
+}
+
+export interface ArtifactsJobRecord extends JobRecordBase {
+  kind: "artifacts";
+  params: Record<string, never>;
+  result: ArtifactsJobResult | null;
+}
+
+export interface DraftJobRecord extends JobRecordBase {
+  kind: "draft";
+  params: { doc_type?: DraftDocType; instructions?: string };
+  result: DraftJobResult | null;
+}
+
+/** Discriminated on `kind` so `job.result` narrows to the right shape. */
+export type JobRecord = ArtifactsJobRecord | DraftJobRecord;
+
+/** What POST /artifacts and POST /drafts return — a receipt, not a result. */
+export interface JobResponse {
+  job_id: string;
+  status: JobStatus;
+}
+
+/** Queued or running: work is in flight and worth polling for. */
+export function isJobLive(job: JobRecord): boolean {
+  return job.status === "queued" || job.status === "running";
 }

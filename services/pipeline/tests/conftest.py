@@ -69,10 +69,14 @@ def db_available() -> bool:
         return False
 
 
-@pytest.fixture(autouse=True)
-def _never_touch_a_real_database():
-    """Guard: if anything re-points the engine at a non-test database, fail
-    loudly rather than drop a schema holding real matters."""
+def _assert_test_database() -> None:
+    """Refuse to drop a schema that is not a *_test one.
+
+    This lives with the drop, not on every test: the danger is `drop_all`, and
+    an autouse guard also failed pure tests (no database involved) whenever
+    Postgres simply was not running — which is a normal offline state and
+    should skip DB tests, not break the suite.
+    """
     from pipeline.db.engine import database_url
 
     name = make_url(database_url()).database or ""
@@ -80,7 +84,6 @@ def _never_touch_a_real_database():
         f"tests are pointed at database {name!r}, which is not a *{TEST_DB_SUFFIX} "
         "database — refusing to run because these tests drop the schema"
     )
-    yield
 
 
 requires_db = pytest.mark.skipif(
@@ -94,6 +97,7 @@ def clean_db():
     from pipeline.db.engine import get_engine
     from pipeline.db.models import Base
 
+    _assert_test_database()  # never drop a schema holding real matters
     engine = get_engine()
     with engine.begin() as conn:
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))

@@ -227,7 +227,7 @@ def test_double_click_is_refused_not_duplicated(
     assert api_client.post(f"/matters/{matter_id}/artifacts").status_code == 202
     second = api_client.post(f"/matters/{matter_id}/artifacts")
     assert second.status_code == 409  # not a second model racing the first
-    assert "already running" in second.json()["detail"]
+    assert "already being generated" in second.json()["detail"]
     assert len(api_client.get(f"/matters/{matter_id}/jobs").json()) == 1
 
 

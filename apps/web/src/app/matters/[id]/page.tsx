@@ -13,19 +13,23 @@ import {
   generateArtifacts,
   getArtifacts,
   getMatter,
+  listJobs,
   startOcr,
   uploadFile,
 } from "@/lib/api";
+import { isJobLive } from "@/lib/types";
 import type {
+  ArtifactsJobRecord,
   Citation,
   DocumentRecord,
   MatterArtifacts,
   MatterManifest,
-  Violation,
 } from "@/lib/types";
+import { useJob, useJobElapsed } from "@/lib/useJob";
 import type { ViewerTarget } from "@/components/PdfViewer";
 import ArtifactTabs from "@/components/ArtifactTabs";
 import DraftPanel from "@/components/DraftPanel";
+import ProviderChip from "@/components/ProviderChip";
 import QueryBox from "@/components/QueryBox";
 import UploadZone from "@/components/UploadZone";
 
@@ -99,13 +103,20 @@ export default function MatterWorkspace({
 
   const [manifest, setManifest] = useState<MatterManifest | null>(null);
   const [artifacts, setArtifacts] = useState<MatterArtifacts | null>(null);
-  const [violations, setViolations] = useState<Violation[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
   const [uploading, setUploading] = useState(false);
-  const [generating, setGenerating] = useState(false);
-  const [elapsed, setElapsed] = useState(0);
+
+  // Brief generation runs as a server-side job. This holds only its id — the
+  // record itself lives on the server, which is what lets the work survive
+  // this tab being closed.
+  const [briefJobId, setBriefJobId] = useState<string | null>(null);
+  const [starting, setStarting] = useState(false);
+  const [briefError, setBriefError] = useState<string | null>(null);
+  /** The newest finished run found on arrival — what the brief already on
+   *  screen came out of, before this session started anything of its own. */
+  const [priorRun, setPriorRun] = useState<ArtifactsJobRecord | null>(null);
 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -114,6 +125,21 @@ export default function MatterWorkspace({
 
   const [viewerTarget, setViewerTarget] = useState<ViewerTarget | null>(null);
   const nonceRef = useRef(0);
+
+  const { job: briefJob, isLive: briefLive } = useJob(briefJobId);
+  const elapsed = useJobElapsed(briefJob, briefLive);
+  // `starting` covers the gap between the click and the 202 coming back, so a
+  // second click cannot fire a POST the server would only reject with a 409.
+  const generating = starting || briefLive;
+
+  // The run that produced the brief on screen: this session's, once it lands,
+  // and otherwise whatever the server says came last. Derived rather than
+  // copied into state — there is one answer and the job record holds it.
+  const briefRun: ArtifactsJobRecord | null =
+    briefJob?.kind === "artifacts" && briefJob.status === "succeeded"
+      ? briefJob
+      : priorRun;
+  const violations = briefRun?.result?.violations ?? [];
 
   const ocrActive = (manifest?.documents ?? []).some(
     (d) => d.ocr_status === "pending" || d.ocr_status === "running",
@@ -150,11 +176,63 @@ export default function MatterWorkspace({
     };
   }, [id]);
 
+  // Pick up where the server is. Generation outlives the tab that started it,
+  // so on arrival the question is never "has this page generated a brief" but
+  // "is this matter's brief being generated right now" — and the answer may
+  // have been set in motion by a session that is long gone.
   useEffect(() => {
-    if (!generating) return;
-    const t = setInterval(() => setElapsed((s) => s + 1), 1000);
-    return () => clearInterval(t);
-  }, [generating]);
+    let cancelled = false;
+    listJobs(id, "artifacts")
+      .then((jobs) => {
+        if (cancelled) return;
+        const live = jobs.find(isJobLive);
+        if (live) setBriefJobId(live.job_id); // polling resumes from here
+
+        // A run that failed while nobody was watching still has to be
+        // reported. Silence here is the failure mode jobs were meant to fix:
+        // the tab that would have shown "Ollama is not running" is closed, and
+        // without this the user learns nothing, presses Generate, and waits out
+        // the same timeout to be told what the server already knew. Only the
+        // newest job — a success after it makes it history, and it clears.
+        const newest = jobs[0];
+        if (newest && newest.status === "failed" && newest.error) {
+          setBriefError(newest.error);
+        }
+
+        // Independently of anything running: the brief already on screen came
+        // out of the last run that succeeded. Recorded even while a new run is
+        // in flight, so that if that one fails the brief it did not replace is
+        // still attributed to the model that actually wrote it.
+        const done = jobs.find((j) => j.status === "succeeded");
+        if (done?.kind === "artifacts") setPriorRun(done);
+      })
+      .catch(() => {
+        // Not knowing about a job is not worth a banner on arrival — the page
+        // still works, and pressing Generate will surface any real problem.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  // The job landed. Read the brief it wrote.
+  useEffect(() => {
+    if (briefJob?.kind !== "artifacts" || briefJob.status !== "succeeded") return;
+    let cancelled = false;
+    getArtifacts(id)
+      .then((a) => {
+        if (!cancelled) setArtifacts(a);
+      })
+      .catch((err) => {
+        if (!cancelled)
+          setBriefError(
+            err instanceof Error ? err.message : "Failed to load the brief.",
+          );
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [briefJob, id]);
 
   // OCR runs on the server with no push channel back, so poll the manifest
   // while any scan is still being read and stop once they all land. Pausing
@@ -263,19 +341,34 @@ export default function MatterWorkspace({
 
   const generate = async () => {
     if (generating) return;
-    setElapsed(0);
-    setGenerating(true);
+    setStarting(true);
+    setBriefError(null);
     setNotice(null);
     try {
-      const res = await generateArtifacts(id);
-      setArtifacts(res.artifacts);
-      setViolations(res.violations);
+      const { job_id } = await generateArtifacts(id);
+      setBriefJobId(job_id);
     } catch (err) {
-      setNotice(
+      // 409 means the model is already working on this matter — from another
+      // tab, or from this one before a reload. That is not a failure to report
+      // to the user; the run they wanted is happening. Attach to it.
+      if (err instanceof ApiError && err.status === 409) {
+        const live = await listJobs(id, "artifacts")
+          .then((jobs) => jobs.find(isJobLive))
+          .catch(() => undefined);
+        if (live) {
+          setBriefJobId(live.job_id);
+          return;
+        }
+        // It finished in the moment between the refusal and the lookup. Say so
+        // plainly rather than showing the server's "already running".
+        setBriefError("A brief was just generated for this matter. Reload to see it.");
+        return;
+      }
+      setBriefError(
         err instanceof Error ? err.message : "Brief generation failed.",
       );
     } finally {
-      setGenerating(false);
+      setStarting(false);
     }
   };
 
@@ -295,6 +388,11 @@ export default function MatterWorkspace({
 
   const documents = manifest?.documents ?? [];
   const fileNames = documents.map((d) => d.file);
+
+  // A failed job's message is written for the person reading it — an over-long
+  // record, Ollama not running, no credits left. It is shown word for word.
+  const briefFailure =
+    briefError ?? (briefJob?.status === "failed" ? briefJob.error : null);
 
   if (loadError) {
     return (
@@ -453,7 +551,7 @@ export default function MatterWorkspace({
                 <button
                   type="button"
                   onClick={() => void generate()}
-                  disabled={documents.length === 0 || ocrActive}
+                  disabled={documents.length === 0 || ocrActive || generating}
                   title={
                     documents.length === 0
                       ? "Upload case-file PDFs first"
@@ -476,7 +574,14 @@ export default function MatterWorkspace({
                     {violations.length === 1 ? "claim" : "claims"} flagged
                   </span>
                 )}
+                {artifacts && <ProviderChip provider={briefRun?.provider ?? null} />}
               </div>
+            )}
+
+            {briefFailure && (
+              <p className="mt-2 whitespace-pre-line rounded-sm border border-oxblood/30 bg-oxblood-wash px-3 py-2 text-xs leading-relaxed text-oxblood">
+                {briefFailure}
+              </p>
             )}
           </div>
 

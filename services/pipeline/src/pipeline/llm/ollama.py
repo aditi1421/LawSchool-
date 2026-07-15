@@ -10,6 +10,22 @@ fit on a laptop hallucinate citations far more, and this product's only claim
 is that every line traces to the record. That is measurable, not a matter of
 opinion — run the ship gate against both and read the numbers.
 
+RAM is the binding constraint, and it is worth knowing before you pull a
+model. Measured on an 8GB M2 against a 27-page record (~12.5k tokens):
+
+  qwen2.5:14b   14.5GB resident   never finished; ~2x RAM, thrashed swap
+  qwen2.5:7b     7.3GB resident   >27 min, no output; ~11% memory free
+  llama3.2:3b    ~2GB             fast, and read "12.03.2019" as the year 1203
+
+Note 7b's 7.3GB is weights *plus* the num_ctx allocation — the context window
+is not free, so "the model is 4.7GB" understates what it needs at runtime.
+A 7B on an M2 with headroom should do this in 2-4 minutes; the 7-10x overrun
+was paging, not computing.
+
+So: 32GB+ for local generation on real case files. Below that, the models that
+fit are the ones that get dates wrong, and the honest options are a bigger
+machine or the API.
+
 Two things make a small model usable at all here:
 - Ollama's `format` takes a JSON Schema and constrains decoding to it, so the
   output parses even when the content is poor. Structural validity is free;
@@ -30,11 +46,24 @@ from pydantic import BaseModel, ValidationError
 
 T = TypeVar("T", bound=BaseModel)
 
-DEFAULT_TIMEOUT = 900.0  # a 14-page judgment on CPU is minutes, not seconds
+# Measured, not guessed: qwen2.5:14b was still generating a 27-page record at
+# 15 minutes when the old 900s ceiling cut it off and the failure was
+# misreported as "Ollama is down". A large local model on a long record is
+# genuinely this slow — the ceiling exists to stop a wedged request, not to
+# pace the model.
+DEFAULT_TIMEOUT = float(os.environ.get("OLLAMA_TIMEOUT", "3600"))
 
 
 class OllamaUnavailable(RuntimeError):
     """Ollama is not reachable, or the requested model is not pulled."""
+
+
+class GenerationTimeout(RuntimeError):
+    """The model was still generating when we stopped waiting.
+
+    Distinct from OllamaUnavailable on purpose: conflating them reports a
+    working server as down and sends the reader to debug the wrong thing.
+    """
 
 
 class RecordTooLongForModel(RuntimeError):
@@ -66,14 +95,14 @@ class OllamaLLM:
         self,
         model: str = DEFAULT_MODEL,
         host: str | None = None,
-        timeout: float = DEFAULT_TIMEOUT,
+        timeout: float | None = None,
         num_ctx: int | None = None,
         max_repair_attempts: int = 2,
         output_reserve: int = 6000,
     ) -> None:
         self._model = model
         self._host = (host or os.environ.get("OLLAMA_HOST") or "http://localhost:11434").rstrip("/")
-        self._timeout = timeout
+        self._timeout = timeout or DEFAULT_TIMEOUT
         # Ollama defaults to a small context (2k) regardless of the model's
         # capability, silently truncating the record — which would look like
         # the model ignoring documents. Set it explicitly.
@@ -87,6 +116,17 @@ class OllamaLLM:
 
         try:
             resp = httpx.post(f"{self._host}{path}", json=payload, timeout=self._timeout)
+        except httpx.TimeoutException as exc:
+            # NOT the same as "Ollama is down", and reporting it that way sends
+            # the reader to check a server that is working fine. The model was
+            # generating; we stopped waiting.
+            raise GenerationTimeout(
+                f"{self._model} was still generating after "
+                f"{self._timeout / 60:.0f} minutes and was cut off. It was not "
+                f"stuck — a large model on a long record is genuinely this slow. "
+                f"Raise OLLAMA_TIMEOUT (seconds), use a smaller model, or use "
+                f"Claude for this matter."
+            ) from exc
         except httpx.HTTPError as exc:
             raise OllamaUnavailable(
                 f"cannot reach Ollama at {self._host} — is `ollama serve` running? ({exc})"

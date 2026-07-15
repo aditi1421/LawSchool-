@@ -176,3 +176,40 @@ def test_record_within_context_is_allowed(monkeypatch: pytest.MonkeyPatch) -> No
 def test_num_ctx_is_configurable_for_bigger_models(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("OLLAMA_NUM_CTX", "131072")
     assert OllamaLLM(model="m")._num_ctx == 131072
+
+
+def test_timeout_is_not_reported_as_a_dead_server(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Regression: a 900s ceiling cut qwen2.5:14b off mid-generation on a
+    27-page record, and the error said 'is ollama serve running?' about a
+    server that was working perfectly."""
+    import httpx
+
+    from pipeline.llm.ollama import GenerationTimeout
+
+    def slow(*a, **k):
+        raise httpx.ReadTimeout("timed out")
+
+    monkeypatch.setattr("httpx.post", slow)
+    with pytest.raises(GenerationTimeout, match="was not stuck"):
+        OllamaLLM(model="qwen2.5:14b", timeout=900).generate("s", "u", Answer)
+
+
+def test_connection_failure_still_says_server(monkeypatch: pytest.MonkeyPatch) -> None:
+    import httpx
+
+    monkeypatch.setattr("httpx.post", lambda *a, **k: (_ for _ in ()).throw(httpx.ConnectError("refused")))
+    with pytest.raises(OllamaUnavailable, match="ollama serve"):
+        OllamaLLM(model="m").generate("s", "u", Answer)
+
+
+def test_timeout_ceiling_is_generous_and_configurable(monkeypatch: pytest.MonkeyPatch) -> None:
+    import importlib
+
+    monkeypatch.setenv("OLLAMA_TIMEOUT", "7200")
+    import pipeline.llm.ollama as mod
+
+    importlib.reload(mod)
+    assert mod.DEFAULT_TIMEOUT == 7200
+    monkeypatch.delenv("OLLAMA_TIMEOUT")
+    importlib.reload(mod)
+    assert mod.DEFAULT_TIMEOUT >= 3600  # 15 minutes was measurably too short

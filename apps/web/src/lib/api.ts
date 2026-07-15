@@ -1,10 +1,11 @@
 import type {
-  CreateDraftResponse,
   DocumentRecord,
   DraftDocType,
   DraftDocument,
   DraftSummary,
-  GenerateArtifactsResponse,
+  JobKind,
+  JobRecord,
+  JobResponse,
   MatterArtifacts,
   MatterManifest,
   OcrStatus,
@@ -28,10 +29,21 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let res: Response;
   try {
     res = await fetch(`${API_URL}${path}`, init);
-  } catch {
+  } catch (err) {
+    // fetch() rejects for several unrelated reasons — the server being down is
+    // only one. It also rejects when the browser cannot read the File being
+    // uploaded (moved, or not materialised locally by iCloud/Drive), when a
+    // response carries no CORS headers, and when the request is aborted.
+    // Reporting "backend unreachable" for all of them hides the actual cause
+    // and sends everyone debugging the wrong thing, so pass it through.
+    const cause = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    console.error(`[lawschool] fetch failed for ${path}`, err);
     throw new ApiError(
       0,
-      "Could not reach the backend. Is the API running on " + API_URL + "?",
+      `Request to ${API_URL}${path} failed — ${cause}. ` +
+        `The API may be down, the browser may be unable to read the file ` +
+        `(try copying it to your Desktop first), or the response may have been ` +
+        `blocked. See the browser console for the original error.`,
     );
   }
   if (!res.ok) {
@@ -94,16 +106,27 @@ export function startOcr(
   );
 }
 
-export function generateArtifacts(
-  id: string,
-): Promise<GenerateArtifactsResponse> {
-  return request<GenerateArtifactsResponse>(
-    `/matters/${encodeURIComponent(id)}/artifacts`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    },
+/** One job record. 404 once the job is unknown to the server. */
+export function getJob(jobId: string): Promise<JobRecord> {
+  return request<JobRecord>(`/jobs/${encodeURIComponent(jobId)}`);
+}
+
+/** This matter's jobs, newest first. */
+export function listJobs(id: string, kind?: JobKind): Promise<JobRecord[]> {
+  const query = kind ? `?${new URLSearchParams({ kind })}` : "";
+  return request<JobRecord[]>(
+    `/matters/${encodeURIComponent(id)}/jobs${query}`,
   );
+}
+
+/** Queue brief generation. Returns a job id (202), not the brief — poll
+ *  `getJob`. Throws ApiError 409 when a brief is already being generated for
+ *  this matter, 422 when there is nothing readable to work from. */
+export function generateArtifacts(id: string): Promise<JobResponse> {
+  return request<JobResponse>(`/matters/${encodeURIComponent(id)}/artifacts`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 export function getArtifacts(id: string): Promise<MatterArtifacts> {
@@ -127,19 +150,19 @@ export function exportUrl(id: string): string {
   return `${API_URL}/matters/${encodeURIComponent(id)}/export.docx`;
 }
 
+/** Queue drafting. Returns a job id (202), not the draft — poll `getJob`,
+ *  then fetch the draft named by `result.draft_id`. Same 409/422 as
+ *  `generateArtifacts`. */
 export function createDraft(
   id: string,
   docType: DraftDocType,
   instructions: string,
-): Promise<CreateDraftResponse> {
-  return request<CreateDraftResponse>(
-    `/matters/${encodeURIComponent(id)}/drafts`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ doc_type: docType, instructions }),
-    },
-  );
+): Promise<JobResponse> {
+  return request<JobResponse>(`/matters/${encodeURIComponent(id)}/drafts`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ doc_type: docType, instructions }),
+  });
 }
 
 export function listDrafts(id: string): Promise<DraftSummary[]> {
