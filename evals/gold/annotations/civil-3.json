@@ -1,0 +1,133 @@
+{
+  "matter_id": "civil-3",
+  "lens": "civil",
+  "files": ["kailash-nath-associates-v-dda-sc-2015.pdf"],
+  "events": [
+    {
+      "event_date": "1982-02-18",
+      "description": "DDA acknowledged receipt of Rs.78,00,000 earnest money, accepted the appellant's highest bid for Plot No.2-A and directed the appellant to deposit the remaining 75% of the bid amount by 17.5.1982",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1982-07-21",
+      "description": "The first High Powered Committee set up by the DDA recommended granting extension of time to bidders for depositing the remaining 75%, following representations made sometime in May 1982 on account of a general recession in the industry",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1982-08-11",
+      "description": "By letter of this date the DDA extended the time for payment upto 28.10.1982 with varying rates of interest starting from 18% and going upto 36%",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1984-05-14",
+      "description": "DDA accepted the recommendations of the second High Powered Committee, which had specifically named the appellant as a person who should be given more time to pay the balance amount; thereafter nothing happened till 1.12.1987 despite several letters written by the appellant between 1984 and 1987",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 2 }
+    },
+    {
+      "event_date": "1987-12-01",
+      "description": "DDA's 'WITHOUT PREJUDICE' letter (the letter on which the fate of the appeal largely depends) requesting the appellant's consent to pay the balance 75% premium within a period to be fixed along with 18% interest per annum, pending a reference to the Government of India for relaxation of the Nazul Rules, 1981; consent was required within 3 days",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 2 }
+    },
+    {
+      "event_date": "1987-12-01",
+      "description": "The appellant replied on the same day giving its consent to pay the balance 75% premium with 18% interest per annum on the belated payment, and requested formal approval for payment in instalments",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 2 }
+    },
+    {
+      "event_date": "1990-03-01",
+      "description": "Central Government informed the DDA by letter that the land auctioned to the appellant was not Nazul land and that the Central Government would have nothing further to do with the matter",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 3 }
+    },
+    {
+      "event_date": "1993-09-02",
+      "description": "Delhi High Court dismissed the appellant's Writ Petition No.2395 of 1990 (which had pleaded Article 14 discrimination vis-a-vis M/s. Ansal Properties and M/s Skipper Tower), holding that a dispute over the auction was a matter of contract that could not be gone into under Article 226",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 3 }
+    },
+    {
+      "event_date": "1993-10-06",
+      "description": "DDA letter cancelling the bid/allotment of Plot No.2-A and forfeiting the earnest money of Rs.78,00,000, consequent upon the appellant's failure to deposit the balance 75% premium and the dismissal of C.W.P. No. 2395 of 1990",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 3 }
+    },
+    {
+      "event_date": "1993-12-16",
+      "description": "Supreme Court dismissed the SLP against the Delhi High Court's order, giving the appellant liberty to take whatever steps are permitted under law to challenge the forfeiture of earnest money",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 3 }
+    },
+    {
+      "event_date": "1994-02-17",
+      "description": "Appellant filed a suit for specific performance and, in the alternative, for recovery of damages and recovery of the earnest amount of Rs.78,00,000",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 3 }
+    },
+    {
+      "event_date": "1994-02-23",
+      "description": "Shortly after the suit was filed, the DDA re-auctioned the premises, which fetched Rs.11.78 crores (against the appellant's bid of Rs.3.12 crores)",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 3 }
+    },
+    {
+      "event_date": "2007-09-10",
+      "description": "Learned Single Judge of the Delhi High Court dismissed the appellant's suit for specific performance and damages but ordered refund of the forfeited earnest money together with interest at 9% per annum, holding that time had been waived by conduct and that cancellation without notice was impermissible",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 3 }
+    },
+    {
+      "event_date": null,
+      "description": "Division Bench of the Delhi High Court, on the DDA's appeal, set aside the Single Judge's judgment and held that the forfeiture of the earnest money by the DDA was in order",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 4 }
+    },
+    {
+      "event_date": "2015-01-09",
+      "description": "Supreme Court allowed the appeal and restored the judgment and order of the Single Judge (refund of the Rs.78,00,000 earnest money with 9% per annum interest), with parties to bear their own costs",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 14 }
+    }
+  ],
+  "facts": [
+    {
+      "key": "case_number",
+      "value": "Civil Appeal No. 193 of 2015 (arising out of SLP (Civil) No.32039 of 2012), Supreme Court of India, Civil Appellate Jurisdiction",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 1 }
+    },
+    {
+      "key": "parties",
+      "value": "M/s. Kailash Nath Associates (appellant; the highest bidder at the DDA's public auction of Plot No.2-A) vs Delhi Development Authority & Anr (respondents)",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 1 }
+    },
+    {
+      "key": "suit_property",
+      "value": "Plot No.2-A, Bhikaji Cama Place, District Centre, New Delhi, put up by the DDA at a public auction",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 1 }
+    },
+    {
+      "key": "bid_and_earnest_money",
+      "value": "Highest bid Rs.3.12 crores (Rupees Three Crores Twelve Lakhs); earnest money of Rs.78,00,000 (25% of the bid amount) deposited at the fall of the hammer; the balance 75% was payable within 3 months of communication of acceptance of the bid, and under clause 2(iv) earnest money was forfeitable only on default, breach or non-compliance of the terms and conditions of the auction or misrepresentation by the bidder",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 1 }
+    },
+    {
+      "key": "relief_claimed",
+      "value": "Suit filed on 17.2.1994 for specific performance and, in the alternative, for recovery of damages and recovery of the earnest amount of Rs.78,00,000",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 3 }
+    },
+    {
+      "key": "statutes_considered",
+      "value": "Section 74 Indian Contract Act, 1872 (compensation for breach where penalty stipulated) read with Section 73; Section 63 (promisee may extend time for performance); Section 20 (agreement void for mistake of fact); Article 14 of the Constitution; Nazul Rules, 1981",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 9 }
+    },
+    {
+      "key": "key_holding",
+      "value": "The letter of cancellation dated 6.10.1993 and the consequent forfeiture of earnest money were made without putting the appellant on notice that it had to deposit the balance 75% premium within a stated time; in the absence of such notice there is no breach of contract on the part of the appellant and consequently earnest money cannot be forfeited",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 6 }
+    },
+    {
+      "key": "outcome",
+      "value": "Appeal allowed; the Division Bench's judgment held to have gone wrong in principle; the Single Judge's judgment and order restored, i.e. refund of the Rs.78,00,000 earnest money with interest at 9% per annum; parties to bear their own costs",
+      "source": { "file": "kailash-nath-associates-v-dda-sc-2015.pdf", "page": 14 }
+    }
+  ],
+  "doc_index": [
+    {
+      "file": "kailash-nath-associates-v-dda-sc-2015.pdf",
+      "title": "M/s. Kailash Nath Associates vs Delhi Development Authority & Anr, Supreme Court of India, judgment dated 9 January 2015",
+      "doc_type": "judgment",
+      "language": "en"
+    }
+  ],
+  "notes": "DRAFT — annotated by AI from the judgment text; REQUIRES HUMAN REVIEW before use as ship-gate ground truth. Source: Indian Kanoon https://indiankanoon.org/doc/70828540/ (text re-rendered to a text-based PDF; page numbers refer to the rendered PDF, not the official court copy). Ambiguities: (1) the date of the public auction itself is never stated — the earliest fixed date is 18.2.1982, when the DDA acknowledged the earnest money and accepted the bid (page 1); (2) the DDA's letter of 1.12.1987 is reproduced with a blank printed year ('New Delhi-23......198... .') and bears No. F.32(2)/82/Impl.-I/4, whereas the appellant's reply of the same date acknowledges a 'letter No. F.30(2)/82-Impl.- I/4 dated nil' — the reference number and the absence of a date on the received copy are discrepancies in the record (page 2); (3) the date of the Division Bench's judgment under appeal is not stated anywhere in the judgment, so that event is left undated (page 4); (4) the representations for extension of time are dated only 'sometime in May, 1982' (month only) and are folded into the 21.7.1982 event rather than being listed separately; (5) the seven reminder letters from the appellant quoted in the Single Judge's para 67 (9-12-1985, 20-10-1986, 10-12-1986, 10-02-1987, 11-04-1987, 10-08-1987 and 10-10-1987, page 4) were omitted to stay within 15 events; (6) the judgment's paragraph numbering starts at 2, the unnumbered 'Leave granted.' being para 1; the cause title on page 1 names only 'Delhi Development Authority & Anr.' — the second respondent is identified as the Union of India (defendant No.2 in the suit) only indirectly, via the Central Government's role at page 3 and the Single Judge's reference to 'the consent of UOI, defendant no.2'; (7) statutes_considered cites page 9, where Section 74 is set out and analysed, but Sections 63 and 20 and Article 14 are discussed on pages 5 and 7; the Section 74 propositions are summarised at para 43 on page 13."
+}

@@ -1,0 +1,123 @@
+{
+  "matter_id": "civil-4",
+  "lens": "civil",
+  "files": ["lucknow-development-authority-v-mk-gupta-sc-1993.pdf"],
+  "events": [
+    {
+      "event_date": "1988-04-26",
+      "description": "Lucknow Development Authority allotted flat No. 11/75 in Vinay Khand-II to the respondent by a draw of lots, on his application for registration for a Middle Income Group (MIG) flat in the Gomti Nagar Scheme, Lucknow, on cash down basis",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "event_date": "1988-07-02",
+      "description": "Respondent deposited a sum of Rs 6132 with the appellant authority",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "event_date": "1988-07-29",
+      "description": "Respondent deposited a further sum of Rs 1,09,975, completing the entire payment in July 1988",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "event_date": "1988-08-18",
+      "description": "The flat was registered in the respondent's name, the entire payment having been made in July 1988",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "event_date": "1988-08-23",
+      "description": "The appellant, by letter of this date, directed its Executive Engineer-VII to hand over possession of the flat to the respondent",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "event_date": "1988-11-30",
+      "description": "The direction to hand over possession was communicated to the respondent, yet the flat was not delivered as the construction work was not complete; the respondent approached the authority but no steps were taken nor was possession handed over",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "event_date": null,
+      "description": "Respondent filed a complaint that even after payment of the entire amount under the cash down scheme the appellant was neither handing over possession nor completing the formalities, and the work was still incomplete (date of the complaint not stated)",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "event_date": null,
+      "description": "The appellant's architect estimated, in October 1989 (month only stated), the cost of completing the construction of the flat at Rs 44,615",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "event_date": "1990-02-15",
+      "description": "State Commission ordered the appellant to pay 12% annual simple interest on the respondent's deposit for the period 1.1.1989 to 15.2.1990 and to hand over possession of the flat without delay after completing construction work up to June 1990",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "event_date": "1990-04-05",
+      "description": "Date fixed by the State Commission by which the appellant was to hand over possession of the flat, after determining the deficiencies, if it was not possible for it to complete the construction",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "event_date": "1990-04-20",
+      "description": "Date fixed by the State Commission by which the estimated cost of the deficient construction was to be refunded to the respondent",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "event_date": null,
+      "description": "National Commission overruled the appellant's objection to jurisdiction and dismissed its appeal, but allowed the respondent's cross-appeal, directing the appellant to pay Rs 44,615 (the architect's estimate for completing construction) and holding that the appellant's action amounted to harassment, mental torture and agony, for which it directed payment of Rs 10,000 as compensation (date of the order not stated)",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "event_date": "1993-11-05",
+      "description": "Supreme Court dismissed all the appeals and, in Civil Appeal No. 6237 of 1990, directed the Lucknow Development Authority to fix the responsibility of the officers who caused the harassment and agony within six months and to recover the Rs 10,000 compensation from them proportionately from their salary, with costs of Rs 5,000 in each of four appeals",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 11 }
+    }
+  ],
+  "facts": [
+    {
+      "key": "case_numbers",
+      "value": "Civil Appeal No. 6237 of 1990 with Civil Appeal Nos. 5257 of 1990, 3963 of 1989 and 2954-59 of 1992 and other connected appeals, Supreme Court of India, directed against orders of the National Consumer Disputes Redressal Commission, New Delhi",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 11 }
+    },
+    {
+      "key": "parties",
+      "value": "Lucknow Development Authority (appellant, a statutory authority constituted under the Lucknow Development Act) vs M.K. Gupta (respondent, allottee of the flat); the batch of appeals also concerned the Delhi Development Authority and the Bangalore Development Authority, and Civil Appeal No. 2954 was filed by a builder",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 1 }
+    },
+    {
+      "key": "legal_issue",
+      "value": "Whether statutory authorities such as the Lucknow, Delhi or Bangalore Development Authorities, constituted under State Acts to carry on planned development of cities, are amenable to the Consumer Protection Act, 1986 for acts or omissions relating to housing activity (delay in delivery of possession, non-completion within the stipulated time, or defective and faulty construction); and whether such housing activity came within the Act only after its amendment by Ordinance No. 24 of 1993",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 1 }
+    },
+    {
+      "key": "suit_property",
+      "value": "Flat No. 11/75 in Vinay Khand-II, Gomti Nagar Scheme, Lucknow, allotted in the Middle Income Group (MIG) category on cash down basis",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "key": "compensation_awarded",
+      "value": "National Commission directed the appellant to pay Rs 44,615, being the cost of completing the construction as estimated by the appellant's architect in October 1989, and a further Rs 10,000 as compensation for harassment, mental torture and agony; the State Commission had earlier awarded 12% annual simple interest on the deposits of Rs 6132 and Rs 1,09,975 for the period 1.1.1989 to 15.2.1990",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 9 }
+    },
+    {
+      "key": "statutes_considered",
+      "value": "Consumer Protection Act, 1986 — clause (o) of Section 2 ('service'), clause (d) ('consumer') and sub-clause (ii) of clause (r) ('unfair trade practice'); Ordinance No. 24 of 1993, which inserted 'housing construction' into the definition of 'service'; the Lucknow Development Act, Delhi Development Act and Bangalore Development Act; Monopolies and Restrictive Trade Practices Act (amended definition of 'service' in 1991)",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 6 }
+    },
+    {
+      "key": "key_holding",
+      "value": "A government or semi-government body or a local authority is as much amenable to the Consumer Protection Act as any other private body rendering similar service; the test is not whether the person complained against is a statutory body but whether the nature of the duty and function performed by it is service or facility. Housing activity was 'service' within clause (o) of Section 2 even before the 1993 amendment, which was added by way of abundant caution",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 5 }
+    },
+    {
+      "key": "outcome",
+      "value": "All the appeals dismissed. In Civil Appeal No. 6237 of 1990 the Lucknow Development Authority was directed to fix, within six months, the responsibility of the officers responsible for causing harassment and agony to the respondent, and to recover the Rs 10,000 compensation from those officers proportionately from their salary, reporting compliance to the Court; costs assessed at Rs 5,000 in each of Civil Appeal Nos. 6237 of 1990, 5257 of 1990, 3963 of 1989 and 2954-59 of 1992, with no order as to costs in the other appeals",
+      "source": { "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf", "page": 11 }
+    }
+  ],
+  "doc_index": [
+    {
+      "file": "lucknow-development-authority-v-mk-gupta-sc-1993.pdf",
+      "title": "Lucknow Development Authority vs M.K. Gupta, Supreme Court of India, judgment dated 5 November 1993",
+      "doc_type": "judgment",
+      "language": "en"
+    }
+  ],
+  "notes": "DRAFT — annotated by AI from the judgment text; REQUIRES HUMAN REVIEW before use as ship-gate ground truth. Source: Indian Kanoon https://indiankanoon.org/doc/1375046/ (text re-rendered to a text-based PDF; page numbers refer to the rendered PDF, not the official court copy). Handling of the source: (1) the Indian Kanoon page for this doc reproduces a run of the law report and bundles TWO further, wholly unrelated judgments after the Lucknow Development Authority judgment — the order in the Ayodhya Presidential reference transfer matter ('On January 7, 1993 the President of India promulgated an Ordinance...') and Union of India v. Amrik Singh (an ESI wage-ceiling matter). The rendered PDF was deliberately truncated at the end of para 13 of the LDA judgment so that the matter contains only the LDA judgment; a human reviewer should confirm nothing of the LDA judgment was cut. (2) The reporter's own page numbers (251, 252 ... 265) survive inline in the text (e.g. 'to the 261 respondent' on page 9) and do NOT correspond to the rendered PDF pages cited here. Ambiguities: (3) the Court expressly declined to recite the facts of the individual appeals ('How the dispute arose in different appeals is not of any consequence except for two appeals'), so the whole chronology is that of Civil Appeal No. 6237 of 1990 (M.K. Gupta's flat) and is recited in a single paragraph — para 9 on page 9 — rather than being spread through the judgment; (4) para 9 says the respondent 'filed a complaint before the District Forum' but the next sentence records the order being made by the State Commission, with no explanation of how the matter reached the State Commission — an apparent gap or slip in the recital; (5) the State Commission's directions are internally odd in sequence: possession was to be handed over after completing construction 'up to June 1990', yet the fallback direction fixed 5.4.1990 for handing over possession and 20.4.1990 for the refund, both earlier than June 1990; (6) the architect's estimate is dated only 'October 1989' (month, no day) and the dates of the District Forum complaint and of the National Commission's order are not stated, so those three events are left undated; (7) Ordinance No. 24 of 1993 is referred to without a date; (8) the 5.11.1993 judgment date appears only in the Indian Kanoon header and the 'DATE OF JUDGMENT05/11/1993' line on page 1, while the operative outcome is at paras 12-13 on page 11, which is the page cited for the outcome event; (9) key_holding cites page 5, where the proposition on statutory bodies appears; the related holding that housing activity was service even before 1993 is at page 6."
+}

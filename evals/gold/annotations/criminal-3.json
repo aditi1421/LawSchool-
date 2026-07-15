@@ -1,0 +1,123 @@
+{
+  "matter_id": "criminal-3",
+  "lens": "criminal",
+  "files": ["gurmeet-singh-v-state-of-punjab-sc-2021.pdf"],
+  "events": [
+    {
+      "event_date": null,
+      "description": "Complainant (father of the deceased) left for Abu Dhabi in April 2004, after the deceased was engaged to the appellant",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2004-11-23",
+      "description": "Marriage between the appellant Gurmeet Singh and the deceased solemnized, in the absence of the complainant",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 2 }
+    },
+    {
+      "event_date": null,
+      "description": "A child was born out of the wedlock in 2006",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 2 }
+    },
+    {
+      "event_date": null,
+      "description": "Complainant returned from abroad in 2007; the deceased informed him that her mother-in-law, father-in-law and the appellant-husband used to physically assault her pursuant to the demand of dowry",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2008-07-21",
+      "description": "Complainant returned to India; the deceased disclosed that her in-laws were demanding money for the purchase of a car, a demand the complainant failed to fulfil",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2008-08-08",
+      "description": "Father-in-law of the deceased informed the complainant that the deceased had consumed poison and lost consciousness; she was found unconscious at the hospital and died later that day",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2008-08-09",
+      "description": "Case registered against the accused Gurmit Singh (per the Trial Court findings extracted in the judgment)",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 8 }
+    },
+    {
+      "event_date": "2008-08-10",
+      "description": "Accused arrested in the case as per the statement of PW-11 SI Dharam Pal; personal search memo Ex.P-26, grounds of arrest memo Ex.P-27 and ground of information memo Ex.P-28 prepared",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 8 }
+    },
+    {
+      "event_date": "2008-08-17",
+      "description": "Date up to which the defence witness claimed the accused's mother-in-law was treated at the hospital, as recorded in the Trial Court's findings on the forged medical records",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 8 }
+    },
+    {
+      "event_date": "2008-08-18",
+      "description": "Date borne by Ex.D1, the defence hospital record relied on by the accused to show cordial relations, which the Trial Court found to be manipulated",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 8 }
+    },
+    {
+      "event_date": "2009-09-03",
+      "description": "Trial Court convicted the appellant-husband, father-in-law and mother-in-law under Section 304-B IPC and sentenced them to seven years rigorous imprisonment each and a fine of Rs.5000/- each",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2010-03-15",
+      "description": "High Court of Punjab and Haryana acquitted the father-in-law and the mother-in-law but upheld the conviction and sentence passed against the accused-appellant",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 3 }
+    },
+    {
+      "event_date": "2021-05-28",
+      "description": "Supreme Court dismissed the appeal, holding that the appellant failed to discharge the burden under Section 113-B, Evidence Act, and reiterated the Satbir Singh guidelines for trials under Section 304-B IPC",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 11 }
+    }
+  ],
+  "facts": [
+    {
+      "key": "case_number",
+      "value": "Criminal Appeal No. 1731 of 2010, Supreme Court of India, arising out of the judgment dated 15.03.2010 of the High Court of Punjab and Haryana at Chandigarh in Criminal Appeal No. 2298-SB of 2009",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 1 }
+    },
+    {
+      "key": "parties",
+      "value": "Gurmeet Singh (appellant, husband of the deceased) vs State of Punjab (respondent)",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 1 }
+    },
+    {
+      "key": "sections_invoked",
+      "value": "Section 304-B, Indian Penal Code (dowry death); the appellant was convicted thereunder and sentenced to undergo rigorous imprisonment for seven years and a fine of Rs.5000/-",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 1 }
+    },
+    {
+      "key": "presumption_applied",
+      "value": "Statutory presumption of causation under Section 113-B, Indian Evidence Act operated against the accused once the ingredients of Section 304-B IPC were established, and was not rebutted by him",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 7 }
+    },
+    {
+      "key": "death_and_registration_of_case",
+      "value": "The deceased (named Rama Devi in the extracted Trial Court findings) expired on 8.8.08; the case against the accused was registered on 9.8.08 and he was arrested on 10.8.08",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 8 }
+    },
+    {
+      "key": "key_witness",
+      "value": "P.W.4 Sarwan Singh, father of the deceased, who deposed to the consistent demand of a car or equivalent cash; both the Trial Court and the High Court found his evidence reliable and consistent",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 6 }
+    },
+    {
+      "key": "bench",
+      "value": "N.V. Ramana, CJI, Surya Kant and Aniruddha Bose, JJ. (author: N.V. Ramana, CJI)",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 1 }
+    },
+    {
+      "key": "outcome",
+      "value": "Appeal dismissed; conviction under Section 304-B IPC upheld as the appellant failed to discharge the burden under Section 113-B, Evidence Act and brought no material warranting interference",
+      "source": { "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf", "page": 11 }
+    }
+  ],
+  "doc_index": [
+    {
+      "file": "gurmeet-singh-v-state-of-punjab-sc-2021.pdf",
+      "title": "Gurmeet Singh vs The State of Punjab, Supreme Court of India, judgment dated 28 May 2021 (dowry death under Section 304-B IPC)",
+      "doc_type": "judgment",
+      "language": "en"
+    }
+  ],
+  "notes": "DRAFT — annotated by AI from the judgment text; REQUIRES HUMAN REVIEW before use as ship-gate ground truth. Source: Indian Kanoon https://indiankanoon.org/doc/133037111/ (text re-rendered to a text-based PDF; page numbers refer to the rendered PDF, not the official court copy). Ambiguities: (1) the deceased is never named in the Court's own narrative — the name 'Rama Devi' and the dates 8.8.08 (death), 9.8.08 (registration of the case) and 10.8.08 (arrest) appear only inside the Trial Court's findings quoted at para 15, so they are the trial court's record as reproduced, not findings of the Supreme Court; the FIR number is never stated anywhere in the judgment. (2) The judgment spells the appellant 'Gurmeet Singh' in its own text but 'Gurmit Singh' throughout the quoted Trial Court extract. (3) The quoted extract contains typos ('crated' for 'created', 'Exibit'/'Ex.Dl' for 'Exhibit'/'Ex.D1'). (4) The extract calls Baksho Devi the accused's 'mother-in-law' while para 15 describes her as the mother of the deceased — the same person, described from different viewpoints. (5) The engagement is dated only to '2004' and that sentence straddles the page 1 / page 2 boundary, so it is annotated from its page 2 continuation; the child's birth (2006) and the complainant's return (2007) are given as years only, and the departure to Abu Dhabi as 'April, 2004' — all recorded as undated (null) events. (6) The judgment repeatedly relies on Satbir Singh v. State of Haryana, Criminal Appeal Nos. 1735-1736 of 2010, decided by the same Bench on the same day (28.05.2021)."
+}

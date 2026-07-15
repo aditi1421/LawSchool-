@@ -1,0 +1,133 @@
+{
+  "matter_id": "criminal-4",
+  "lens": "criminal",
+  "files": ["ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf"],
+  "events": [
+    {
+      "event_date": "2011-08-10",
+      "description": "High Court of Andhra Pradesh passed orders in Writ Petition Nos. 794, 6604 and 6979 of 2011 on which the CBI investigation was ordered",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2011-08-17",
+      "description": "CBI, Hyderabad registered case R.C. No. 19(A)/2011-CBI-Hyderabad against Y.S. Jagan Mohan Reddy (A-1), Member of Parliament, and 73 others; the appellant was named as accused at Sl. No. 1 in the FIR of this date",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2012-03-31",
+      "description": "CBI filed the first charge sheet before the Special Judge for CBI Cases, Hyderabad; the Principal Special Judge took cognizance of it and it was numbered CC No. 8 of 2012",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2012-04-23",
+      "description": "CBI filed the second charge sheet before the Special Judge for CBI Cases, Hyderabad, with the appellant arrayed as A-1",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2012-05-07",
+      "description": "CBI filed the third charge sheet before the Special Judge for CBI Cases, Hyderabad, with the appellant arrayed as A-1",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2012-05-27",
+      "description": "Appellant arrested for his involvement and complicity in the case; he thereafter remained in judicial custody",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2012-06-01",
+      "description": "Special Judge for CBI Cases, Hyderabad dismissed the appellant's application for regular bail (Crl. M.P. No. 1055/2012 in CC No. 8 of 2012, filed on 29.05.2012 under Section 437 CrPC)",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2012-06-02",
+      "description": "High Court allowed Criminal Petition Nos. 4743 and 4744 of 2012 and remanded A-1 to the custody of the CBI from 03.06.2012 to 07.06.2012",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2012-07-04",
+      "description": "High Court dismissed the appellant's bail application in Criminal Petition No. 5211 of 2012, noting the serious nature of the offence and that witnesses could be influenced by him",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 3 }
+    },
+    {
+      "event_date": "2012-08-13",
+      "description": "CBI filed the fourth charge sheet in the Court of Principal Special Judge for CBI Cases, Hyderabad, numbered CC No. 14 of 2012",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 3 }
+    },
+    {
+      "event_date": "2012-10-05",
+      "description": "Supreme Court dismissed SLP (Crl.) No. 5902 of 2012, directing the CBI to complete the investigation into the remaining 7 issues as early as possible and file a consolidated charge sheet, with liberty to the appellant to renew his bail prayer before the trial court",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 3 }
+    },
+    {
+      "event_date": "2012-11-16",
+      "description": "Appellant filed Crl. M.P. No. 1938 of 2012 seeking default/statutory bail and, on the same day, Crl. M.P. No. 1939 of 2012 in CC No. 8 of 2012 seeking regular bail, before the Special Judge for CBI Cases, Hyderabad",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 3 }
+    },
+    {
+      "event_date": "2013-01-24",
+      "description": "High Court of Judicature of Andhra Pradesh at Hyderabad dismissed Criminal Petition No. 8750 of 2012 seeking bail — the order impugned in this appeal",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 1 }
+    },
+    {
+      "event_date": "2013-04-08",
+      "description": "CBI completed the investigation with respect to M/s Dalmia Cements and filed the charge sheet in the Court of the Special Judge for CBI Cases, Hyderabad against A-1 and 12 others under various sections of the IPC and the PC Act",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 5 }
+    },
+    {
+      "event_date": "2013-05-09",
+      "description": "Supreme Court dismissed the appeal, refusing bail, and directed the CBI to complete the investigation and file the charge sheet(s) within a period of 4 months, whereafter the appellant is free to renew his bail prayer before the trial Court",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 8 }
+    }
+  ],
+  "facts": [
+    {
+      "key": "case_number",
+      "value": "Criminal Appeal No. 730 of 2013 (Arising out of S.L.P. (Crl.) No. 3404 of 2013), Supreme Court of India",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 1 }
+    },
+    {
+      "key": "parties",
+      "value": "Y.S. Jagan Mohan Reddy (appellant, arrayed as A-1) vs Central Bureau of Investigation (respondent)",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 1 }
+    },
+    {
+      "key": "fir_number",
+      "value": "R.C. No. 19(A)/2011-CBI-Hyderabad dated 17.08.2011, registered against Y.S. Jagan Mohan Reddy (A-1), Member of Parliament, and 73 others",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 2 }
+    },
+    {
+      "key": "sections_invoked",
+      "value": "Section 120B read with Sections 420, 409 and 477-A of the Indian Penal Code, 1860 and Section 13(2) read with Section 13(1)(c) and (d) of the Prevention of Corruption Act, 1988",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 2 }
+    },
+    {
+      "key": "custody_period",
+      "value": "The appellant had been in custody for nearly a period of 1 year as on the hearing of this appeal, a fact relied on by his senior counsel along with the submission that many persons alleged to be involved were not in custody",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 4 }
+    },
+    {
+      "key": "magnitude_of_offence",
+      "value": "Investigation pending into seven distinct conspiracies (Sandur Power, Bharti/Raghuram Cements mining lease, Penna Cements, Dalmia Cements, India Cements, Kolkata/Mumbai 'suit case' companies, Indu Projects/Lepakshi Knowledge Hub); amounts under investigation estimated to exceed Rs.3000 crores",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 4 }
+    },
+    {
+      "key": "bench",
+      "value": "P. Sathasivam and M.Y. Eqbal, JJ. (author: P. Sathasivam, J.)",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 1 }
+    },
+    {
+      "key": "outcome",
+      "value": "Appeal dismissed and bail refused, the Court holding that release of the appellant at this stage may hamper the investigation as he may influence witnesses and tamper with material evidence; CBI directed to complete the investigation and file charge sheet(s) within 4 months, after which the appellant may renew his bail prayer before the trial Court, to be considered independently on its own merits",
+      "source": { "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf", "page": 8 }
+    }
+  ],
+  "doc_index": [
+    {
+      "file": "ys-jagan-mohan-reddy-v-cbi-sc-2013.pdf",
+      "title": "Y.S. Jagan Mohan Reddy vs C.B.I., Supreme Court of India, judgment dated 9 May 2013 (bail in economic offences / disproportionate assets investigation)",
+      "doc_type": "judgment",
+      "language": "en"
+    }
+  ],
+  "notes": "DRAFT — annotated by AI from the judgment text; REQUIRES HUMAN REVIEW before use as ship-gate ground truth. Source: Indian Kanoon https://indiankanoon.org/doc/183369852/ (text re-rendered to a text-based PDF; page numbers refer to the rendered PDF, not the official court copy). Ambiguities: (1) The allegations recited at para 4(c) (floating companies since May 2004, benami shareholders, quid pro quo investments, laundering of bribe money) and the company/transaction dates on pages 5-6 (Sandur Power incorporated 23.10.1998; A-1 a director from 16.06.2001 to 11.01.2010; Rs. 55 crores paid between 16.05.2010 and 13.06.2011 through hawala) are the CBI's allegations and Status Report material as recorded by the Court, not judicial findings — the Court expressly decided the bail plea 'without expressing any opinion on the merits'. (2) The following dated events were recited in the judgment but are NOT included above, to keep the chronology within the 8-15 event budget: 09.08.2012 (Supreme Court issued notice in SLP (Crl.) No. 5902 of 2012 and dismissed SLP (Crl.) No. 5901 of 2012, page 3); 28.11.2012 and 04.12.2012 (Special Judge rejected Crl. M.P. Nos. 1938 and 1939 of 2012 respectively, page 3); 24.12.2012 (High Court dismissed Criminal Petition No. 8576 of 2012, page 3); 06.05.2013 (CBI counter affidavit sworn by the DIG and Chief Investigating Officer, page 3); and the corporate-history dates of M/s Jagathi Publications Pvt. Ltd. — 14.11.2006 (originally incorporated as a private limited company), 21.06.2007 (A-1 appointed Director and Chairman with effect from this date) and 12.01.2009 (converted into a public limited company), all on page 2. The procedural chronology (FIR, charge sheets, arrest, custody, bail and appeal dates) was preferred over this corporate background when trimming to the event budget. (3) Para 9 refers to 'the order dated 05.12.2012' where the order under discussion throughout is dated 05.10.2012 — an apparent typo in the judgment. (4) The impugned High Court order dated 24.01.2013 is described on page 1 and again in the narrative on page 3; page 1 is cited here. (5) The rendered text carries stray digits ('1', '2', '3') from the original page markers of the court copy, e.g. before 'CRIMINAL APPEAL NO. 730 OF 2013' on page 1."
+}

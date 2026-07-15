@@ -1,0 +1,133 @@
+{
+  "matter_id": "criminal-5",
+  "lens": "criminal",
+  "files": ["p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf"],
+  "events": [
+    {
+      "event_date": "2006-02-23",
+      "description": "Incorporation expenses of M/s Ausbridge Holding and Investments Pvt. Ltd. (in which Karti P. Chidambaram was a promoter, director and shareholder) paid by ASCPL vide cheque no. 116868 of this date",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 6 }
+    },
+    {
+      "event_date": null,
+      "description": "In May 2007 the Finance Minister (the petitioner) granted approval, in the normal course of official business, to the FIPB proposal of M/s INX Media Pvt. Ltd. for FDI in a proposed TV channel up to 46.216 percent of the issued equity capital",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2007-10-01",
+      "description": "Debit Note raised by CBN Placement and Management Centre, prepared by Bhaskararaman and signed without knowledge of the parties mentioned in it",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 7 }
+    },
+    {
+      "event_date": "2007-11-10",
+      "description": "ASCPL received Rs. 34,36,031 from M/s Span Fibre India Pvt. Ltd. in its DCB Bank account no. 0602100003711 (first of four credits totalling Rs. 1,11,09,464 in 2007-08)",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 8 }
+    },
+    {
+      "event_date": "2008-05-29",
+      "description": "ASCPL received Rs. 22,82,066 from M/s Span Fibre India Pvt. Ltd., the last of the four credits alleged to be illegal gratification for the FDI approval granted to INX Media",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 8 }
+    },
+    {
+      "event_date": "2010-10-26",
+      "description": "ASCPL sold the shares of Vasan Health Care to Sequoia Capital India Growth Investment Holding",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 8 }
+    },
+    {
+      "event_date": "2010-10-29",
+      "description": "Remaining payment of Rs. 1 Crore due for the Vasan Health Care shares purchased by ASCPL was made, only after those shares had been sold to Sequoia",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 8 }
+    },
+    {
+      "event_date": "2015-12-01",
+      "description": "Hard disks of Shri S. Bhaskararaman, containing extracts of the books of accounts and emails relied on to show ASCPL was beneficially owned by Karti P. Chidambaram, seized from the premises of Shri Karti P. Chidambaram",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 7 }
+    },
+    {
+      "event_date": "2016-10-14",
+      "description": "Statement of Mr. Manoj Mohanka recorded in the Aircel Maxis case, stating that 60 Lakh shares of Artevea Digital Ltd. were allotted to ASC, Singapore without any payment on the instructions of Karti P. Chidambaram",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 6 }
+    },
+    {
+      "event_date": "2017-05-15",
+      "description": "CBI recorded FIR (No. RC220-2017-E-0011), ten years after the FIPB approval and based on alleged 'oral source of information', against four companies, Karti P. Chidambaram, unknown officers/officials of the Ministry of Finance and other unknown persons; the petitioner was not named as an accused or suspect",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2018-01-13",
+      "description": "Searches conducted at the premises of Karti P. Chidambaram, during which paintings purchased by ASCPL were recovered",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 7 }
+    },
+    {
+      "event_date": "2018-10-10",
+      "description": "Provisional attachment order passed attaching some of the proceeds of crime already identified, relied on by the respondents in opposing pre-arrest bail",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 4 }
+    },
+    {
+      "event_date": null,
+      "description": "In January 2019 the respondent-CBI sought sanction to prosecute the petitioner, which according to his counsel meant a draft charge-sheet had been put up before the authorities concerned and the CBI investigation was complete",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2019-03-11",
+      "description": "Judgment reserved by the High Court of Delhi after hearing both bail applications together",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 1 }
+    },
+    {
+      "event_date": "2019-08-20",
+      "description": "Order pronounced declining pre-arrest bail to the petitioner in both the CBI and the ED matters; both applications disposed of",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 12 }
+    }
+  ],
+  "facts": [
+    {
+      "key": "case_numbers",
+      "value": "BAIL APPLN. 1316/2018 & Crl. M.A. 10976/2018 (CBI matter) and BAIL APPLN. 1713/2018 & Crl. M. (B) 1163/2018 (ED matter), High Court of Delhi at New Delhi, heard together and disposed of by a common order",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 1 }
+    },
+    {
+      "key": "parties",
+      "value": "P. Chidambaram (petitioner, Finance Minister at the relevant time and a sitting member of Rajya Sabha) vs Central Bureau of Investigation (respondent in Bail Appln. 1316/2018) and Directorate of Enforcement, Delhi (respondent in Bail Appln. 1713/2018)",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 1 }
+    },
+    {
+      "key": "fir_number",
+      "value": "FIR No. RC220-2017-E-0011 (CBI) and ECIR/07/HIU/2017 registered under the provisions of the Prevention of Money-Laundering Act, 2002",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 1 }
+    },
+    {
+      "key": "sections_invoked",
+      "value": "Section 120B read with Section 420 of the IPC and Sections 8 and 13(2) r/w Section 13(1)(d) of the Prevention of Corruption Act, 1988 in the CBI FIR; and the provisions of the Prevention of Money-Laundering Act, 2002 in the ECIR",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 1 }
+    },
+    {
+      "key": "relief_sought",
+      "value": "Pre-arrest (anticipatory) bail in both the CBI FIR and the ED's ECIR arising out of the INX Media FDI approval",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 1 }
+    },
+    {
+      "key": "interim_protection",
+      "value": "While entertaining both bail applications the Court had granted interim protection to the petitioner subject to his joining the investigation, and the petitioner had joined the investigation",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 2 }
+    },
+    {
+      "key": "bench",
+      "value": "Hon'ble Mr. Justice Sunil Gaur, High Court of Delhi",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 1 }
+    },
+    {
+      "key": "outcome",
+      "value": "Pre-arrest bail declined and both applications disposed of, the Court holding prima facie that it is not a fit case for grant of pre-arrest bail, while observing that nothing stated shall be taken as an expression on merits at trial; the twin factors weighing against the petitioner were the gravity of the offence and the evasive replies given by him while under the Court's protective cover",
+      "source": { "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf", "page": 12 }
+    }
+  ],
+  "doc_index": [
+    {
+      "file": "p-chidambaram-v-directorate-of-enforcement-delhi-hc-2019.pdf",
+      "title": "P. Chidambaram vs Directorate of Enforcement, Delhi (and CBI), High Court of Delhi, common order dated 20 August 2019 declining pre-arrest bail (INX Media / PMLA)",
+      "doc_type": "order",
+      "language": "en"
+    }
+  ],
+  "notes": "DRAFT — annotated by AI from the judgment text; REQUIRES HUMAN REVIEW before use as ship-gate ground truth. Source: Indian Kanoon https://indiankanoon.org/doc/89606662/ (text re-rendered to a text-based PDF; page numbers refer to the rendered PDF, not the official court copy). Ambiguities: (1) This is a common order in TWO bail applications — Indian Kanoon titles the document 'P. Chidambaram vs Directorate Of Enforcement, Delhi' although the respondent in the first application (Bail Appln. 1316/2018) is the CBI; a near-duplicate of the same order is also published at https://indiankanoon.org/doc/152893232/ under the title 'P. Chidambaram vs Central Bureau Of Investigation'. (2) Para 5 records the petitioner's submission that 'based on ECIR/07/HIU/2017, registered by the CBI, Enforcement Directorate (ED) recorded an ECIR' — an apparent error in the order, since an ECIR is the ED's record and the CBI registered the FIR; the ED maintained the ECIR is an internal record never given to the petitioner. (3) Nearly all the dated transactions annotated above (the 2006-2010 cheque, Debit Notes, Span Fibre credits, Vasan/Sequoia share sale, seizures, statements) are allegations from the Investigating Agencies' material as recorded by the Court, not judicial findings — the Court expressly refrained from commenting on the merits. (4) The two remaining Span Fibre credits (Rs. 30,70,531 on 21.01.2008 and Rs. 23,20,836 on 21.02.2008, page 8), the further Debit Notes dated 17.11.2007 and 01.04.2008 (page 7), the September 2008 Northstar invoices and the resignation of Mr. S. Sundar in January 2008 (pages 6-7) are recited in the order but omitted above to keep within the 8-15 event budget. (5) The order was pronounced on 20.08.2019 — that date appears both in the header on page 1 ('Pronounced on: 20th August, 2019') and in the signature block on page 12; page 12 is cited for the operative outcome. (6) The rendered text carries the original court copy's running footer ('Bail Appl. 1316/2018 & 1713/2018 Page N of 24') inline, so the internal page numbering of the official copy differs from the rendered PDF pagination used here."
+}

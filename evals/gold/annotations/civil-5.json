@@ -1,0 +1,108 @@
+{
+  "matter_id": "civil-5",
+  "lens": "civil",
+  "files": ["anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf"],
+  "events": [
+    {
+      "event_date": null,
+      "description": "K.V. Damodar Rao is said to have orally gifted the backyard portion of Nos. 13/775 and 13/776 (separated from the main building by a dividing wall) to his sister Rukminibai by way of 'Pasupu Kumkumam' in the year 1961 (year only stated); the defendant denied the gift and Damodar Rao gave evidence that he remained the owner",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 2 }
+    },
+    {
+      "event_date": "1968-12-09",
+      "description": "Plaintiffs 1 and 2 purchased the two suit sites from Rukminibai under two registered sale deeds (Exs.A1 and A2), and claimed the sites were thereafter mutated in their names in the municipal records",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1977-11-07",
+      "description": "Defendant purchased the suit property (described by him as 300 sq. yards in Premises No. 13/776) from K.V. Damodar Rao, brother of the plaintiffs' vendor Rukminibai, under a registered sale deed (Ex.B1), and claimed he was put in possession by Damodar Rao and obtained mutation, a sanctioned building plan and a Central Government loan on mortgage of the property",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1978-05-03",
+      "description": "According to the plaint, the defendant interfered with the plaintiffs' work when they were digging trenches in order to commence construction on the suit sites; the defendant's case was that the plaintiffs tried to interfere with his possession when he commenced construction",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 1 }
+    },
+    {
+      "event_date": null,
+      "description": "Plaintiffs filed suit OS No.279 of 1978 in the file of the Principal District Munsiff, Warangal, for a permanent injunction restraining the defendant from interfering with their possession (exact date of institution not stated)",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 1 }
+    },
+    {
+      "event_date": "1985-12-31",
+      "description": "Trial court decreed the suit, holding on the strength of the two sale deeds, the tax paid receipts and the oral evidence that the plaintiffs were in possession of the suit property from the date of purchase and that the defendant had interfered with their possession",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 2 }
+    },
+    {
+      "event_date": "1991-12-09",
+      "description": "First appellate court (Addl. District Judge, Warangal) allowed the defendant's appeal and dismissed the suit, holding that the defendant was in possession, that the plaintiffs had not made out even prima facie title or possession, and that once the written statement set up title in the defendant the plaintiffs ought to have amended the plaint to convert the suit into one for declaration and injunction",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 2 }
+    },
+    {
+      "event_date": null,
+      "description": "Plaintiffs, being aggrieved by the dismissal of their suit, filed second appeal SA No.29 of 1992 in the High Court (exact date of filing not stated)",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 2 }
+    },
+    {
+      "event_date": "1999-01-18",
+      "description": "High Court allowed the second appeal and restored the judgment and decree of the trial court, examining the evidence in detail and recording findings that there was a valid oral gift by 'Pasupu Kumkumam' in 1961, that Section 41 of the Transfer of Property Act protected the plaintiffs' purchase from the ostensible owner, and that it was unnecessary for the plaintiffs to sue for declaration of title",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 2 }
+    },
+    {
+      "event_date": "2008-03-25",
+      "description": "Supreme Court allowed the defendant's appeal by special leave, set aside the High Court's judgment and dismissed the suit, holding that the High Court exceeded its jurisdiction under Section 100 CPC by re-examining questions of fact and recording findings on title in the absence of pleadings and an issue; liberty reserved to the plaintiffs' successors to file a suit for declaration and consequential reliefs, with parties to bear their respective costs",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 8 }
+    }
+  ],
+  "facts": [
+    {
+      "key": "case_number",
+      "value": "Appeal (civil) 6191 of 2001 (Civil Appeal No.6191 of 2001), Supreme Court of India, arising from SA No.29 of 1992 of the High Court and OS No.279 of 1978 of the Principal District Munsiff, Warangal",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 1 }
+    },
+    {
+      "key": "parties",
+      "value": "Anathula Sudhakar (appellant; the defendant in the suit) vs P. Buchi Reddy (dead) by LRs & Ors (respondents); the plaintiffs in the suit were Puli Chandra Reddy and Puli Buchi Reddy, both since deceased — the LRs of Puli Chandra Reddy are Respondents 2 to 5 and the LRs of Puli Buchi Reddy are Respondent 1(i) to (iii)",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 1 }
+    },
+    {
+      "key": "suit_property",
+      "value": "Two sites bearing no. 13/776/B and 13/776/C measuring 110 sq. yards and 187 sq. yards in Matwada, Warangal town, together referred to as the 'suit property'",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 1 }
+    },
+    {
+      "key": "relief_claimed",
+      "value": "A permanent injunction to restrain the defendant from interfering with the plaintiffs' possession of the two suit sites (OS No.279 of 1978); no relief of declaration of title was sought, and the trial court framed no issue on title",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 1 }
+    },
+    {
+      "key": "competing_titles",
+      "value": "Plaintiffs claimed as owners in possession under two registered sale deeds dated 9.12.1968 (Exs.A1 and A2) from Rukminibai; the defendant claimed under a registered sale deed dated 7.11.1977 (Ex.B1) from K.V. Damodar Rao, the brother of the plaintiffs' vendor Rukminibai, asserting that he was put in possession and that the property stood transferred to his name in the municipal records",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 1 }
+    },
+    {
+      "key": "statutes_considered",
+      "value": "Section 100 CPC (scope of second appeal); Section 41 Transfer of Property Act, 1882 (transfer by ostensible owner with the implied consent of the true owner)",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 3 }
+    },
+    {
+      "key": "key_holding",
+      "value": "Where a cloud is raised over the plaintiff's title and he does not have possession, a suit for declaration and possession, with or without a consequential injunction, is the remedy; where there is merely an interference with lawful possession or a threat of dispossession, an injunction simpliciter suffices. A finding on title cannot be recorded in a suit for injunction unless there are necessary pleadings and an appropriate issue regarding title; and where de jure possession has to be established on the basis of title, as in the case of vacant sites, the issue of title may directly and substantially arise",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 6 }
+    },
+    {
+      "key": "outcome",
+      "value": "Appeal allowed; the High Court's judgment set aside and the suit dismissed, the High Court having exceeded its jurisdiction under Section 100 CPC by re-examining questions of fact, going into questions not pleaded and not the subject matter of any issue, and interfering with the first appellate court's finding that the plaintiffs ought to have filed a suit for declaration; nothing stated to be construed as an expression of opinion on title in any future suit for declaration and consequential reliefs; parties to bear their respective costs",
+      "source": { "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf", "page": 8 }
+    }
+  ],
+  "doc_index": [
+    {
+      "file": "anathula-sudhakar-v-p-buchi-reddy-sc-2008.pdf",
+      "title": "Anathula Sudhakar vs P. Buchi Reddy (Dead) By LRs & Ors, Supreme Court of India, judgment dated 25 March 2008",
+      "doc_type": "judgment",
+      "language": "en"
+    }
+  ],
+  "notes": "DRAFT — annotated by AI from the judgment text; REQUIRES HUMAN REVIEW before use as ship-gate ground truth. Source: Indian Kanoon https://indiankanoon.org/doc/540361/ (text re-rendered to a text-based PDF; page numbers refer to the rendered PDF, not the official court copy). Ambiguities: (1) para 5 on page 2 describes the plaintiffs' sale deeds as dated '9.1.1968', whereas para 2 (page 1) and para 18 (page 6) both give 9.12.1968 — '9.1.1968' is treated as a typo in the judgment and 9.12.1968 is used; (2) para 3 (page 1) records the defendant's case that he purchased '300 sq. yards in Premises No. 13/776', while the suit sites are described in para 1 as Nos. 13/776/B and 13/776/C measuring 110 and 187 sq. yards (297 sq. yards in total) — the judgment does not reconcile the areas or the numbering, and para 5 (page 2) simply records there was no dispute that the site the defendant bought is the same as the two sites the plaintiffs bought; (3) the oral gift is dated only to 'the year 1961' and the filing dates of OS No.279 of 1978 and SA No.29 of 1992 are not stated (the years appear only in the case numbers), so those three events are left undated; (4) the 3.5.1978 interference is the plaintiffs' pleaded case, not a finding — the defendant's rival case was that the plaintiffs interfered with his possession and filed a false suit; (5) the judgment's first paragraph is unnumbered, the numbering running from 2; (6) the plaintiffs led three mutually inconsistent versions of how Rukminibai got the property (paras 18-19, pages 6-7), which the first appellate court found sketchy and inconsistent — not listed as chronology events; (7) key_holding cites page 6, where the summary propositions (a)-(c) appear; the fuller discussion runs from page 4 (para 11.3) onwards and the concluding application is at page 8."
+}
