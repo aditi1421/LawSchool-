@@ -117,13 +117,25 @@ export type DraftDocType =
   | "legal_notice"
   | "written_statement"
   | "bail_application"
-  | "plaint";
+  | "plaint"
+  | "synopsis_and_list_of_dates"
+  | "writ_petition"
+  | "slp";
 
 export interface DraftParagraph {
   text: string;
-  kind: "factual" | "boilerplate";
+  kind: "factual" | "boilerplate" | "heading" | "ground";
   cites: Citation[];
   verified: boolean;
+}
+
+/** One row of a List of Dates & Events — derived in code from the verified
+ *  chronology, never drafted by the model. */
+export interface ListOfDatesEntry {
+  event_date: string | null; // ISO date; null = undated bucket, never inferred
+  event: string;
+  cites: Citation[];
+  confidence: "high" | "low_ocr";
 }
 
 export interface DraftDocument {
@@ -131,6 +143,8 @@ export interface DraftDocument {
   doc_type: DraftDocType;
   title: string;
   court_header: string | null;
+  synopsis: DraftParagraph[];
+  list_of_dates: ListOfDatesEntry[];
   paragraphs: DraftParagraph[];
   prayer: string[];
   missing_info: string[];
@@ -146,8 +160,10 @@ export interface DraftSummary {
 
 export interface DraftViolation {
   kind: string;
-  paragraph: number;
+  paragraph: string; // excerpt of the offending text
   cite: Citation | null;
+  asserted?: string | null; // the figure the record does not support
+  where?: string | null; // address in the document, e.g. "synopsis[2]"
 }
 
 /* ── Jobs ─────────────────────────────────────────────────────────────
@@ -170,6 +186,13 @@ export interface ArtifactsJobResult {
 export interface DraftJobResult {
   draft_id: string;
   violations: DraftViolation[];
+  /** Verify-and-revise loop telemetry: model calls made, revision rounds
+   *  needed, the support judge that ran (null = code-only checks), and how
+   *  many failures each verify pass found. */
+  attempts?: number;
+  revised?: number;
+  judge?: string | null;
+  rounds?: number[];
 }
 
 interface JobRecordBase {

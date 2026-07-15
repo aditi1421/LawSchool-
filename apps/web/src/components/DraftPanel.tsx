@@ -18,6 +18,7 @@ import type {
   DraftSummary,
   JobProvider,
   JobRecord,
+  ListOfDatesEntry,
 } from "@/lib/types";
 import { useJob, useJobElapsed } from "@/lib/useJob";
 import CitationChip from "./CitationChip";
@@ -28,6 +29,9 @@ const DOC_TYPES: { value: DraftDocType; label: string }[] = [
   { value: "written_statement", label: "Written statement" },
   { value: "bail_application", label: "Bail application" },
   { value: "plaint", label: "Plaint" },
+  { value: "synopsis_and_list_of_dates", label: "Synopsis & list of dates" },
+  { value: "writ_petition", label: "Writ petition (Art. 226)" },
+  { value: "slp", label: "SLP (Art. 136)" },
 ];
 
 const DOC_TYPE_LABELS: Record<DraftDocType, string> = Object.fromEntries(
@@ -73,18 +77,25 @@ function DraftText({ text }: { text: string }) {
 
 function Paragraph({
   para,
-  number,
+  marker,
   onJump,
 }: {
   para: DraftParagraph;
-  number: number | null;
+  marker: string | null; // "3." for factual paragraphs, "A." for grounds
   onJump: (cite: Citation) => void;
 }) {
-  const factual = para.kind === "factual";
+  if (para.kind === "heading") {
+    return (
+      <p className="pt-1 text-center text-xs font-bold uppercase tracking-widest text-ink">
+        {para.text}
+      </p>
+    );
+  }
+  const factual = para.kind === "factual" || para.kind === "ground";
   return (
     <div className="flex gap-3">
       <span className="w-6 shrink-0 text-right font-mono text-xs leading-relaxed text-ink-muted">
-        {number !== null ? `${number}.` : ""}
+        {marker ?? ""}
       </span>
       <div className="min-w-0 flex-1">
         <p
@@ -115,6 +126,90 @@ function Paragraph({
   );
 }
 
+/** Numbered factual paragraphs, lettered grounds, plain boilerplate. */
+function ProseSection({
+  paragraphs,
+  numbered,
+  onJump,
+}: {
+  paragraphs: DraftParagraph[];
+  numbered: boolean;
+  onJump: (cite: Citation) => void;
+}) {
+  let n = 0;
+  let g = 0;
+  return (
+    <div className="space-y-3">
+      {paragraphs.map((para, i) => (
+        <Paragraph
+          key={i}
+          para={para}
+          marker={
+            para.kind === "ground"
+              ? `${String.fromCharCode(65 + g++ % 26)}.`
+              : para.kind === "factual" && numbered
+                ? `${++n}.`
+                : null
+          }
+          onJump={onJump}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** The List of Dates: derived from the verified chronology, so every row is
+ *  cited and an undated event says so instead of guessing. */
+function ListOfDates({
+  entries,
+  onJump,
+}: {
+  entries: ListOfDatesEntry[];
+  onJump: (cite: Citation) => void;
+}) {
+  const shown = (iso: string | null) => {
+    if (!iso) return "Undated";
+    const [y, m, d] = iso.split("-");
+    return `${d}.${m}.${y}`; // the record's own convention, day first
+  };
+  return (
+    <table className="w-full border-collapse text-sm">
+      <thead>
+        <tr className="border-b border-rule text-left text-[11px] uppercase tracking-widest text-ink-muted">
+          <th className="w-24 py-1.5 pr-3 font-semibold">Date</th>
+          <th className="py-1.5 font-semibold">Event</th>
+        </tr>
+      </thead>
+      <tbody>
+        {entries.map((e, i) => (
+          <tr key={i} className="border-b border-rule-soft align-top">
+            <td className="py-2 pr-3 font-mono text-xs text-ink-soft">
+              {shown(e.event_date)}
+            </td>
+            <td className="py-2">
+              <p className="leading-relaxed text-ink">{e.event}</p>
+              <div className="mt-1 flex flex-wrap items-center gap-1">
+                {e.cites.map((c, j) => (
+                  <CitationChip
+                    key={`${c.file}-${c.page}-${c.para}-${j}`}
+                    cite={c}
+                    onJump={onJump}
+                  />
+                ))}
+                {e.confidence === "low_ocr" && (
+                  <span className="rounded-sm bg-oxblood-wash px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-oxblood">
+                    low OCR
+                  </span>
+                )}
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 function DraftView({
   matterId,
   draftId,
@@ -128,7 +223,6 @@ function DraftView({
   provider: JobProvider | null;
   onJump: (cite: Citation) => void;
 }) {
-  let n = 0;
   return (
     <div className="border-t border-rule-soft bg-paper/60 px-4 py-4">
       {draft.court_header && (
@@ -145,15 +239,34 @@ function DraftView({
         </p>
       )}
 
-      <div className="mt-4 space-y-3">
-        {draft.paragraphs.map((para, i) => (
-          <Paragraph
-            key={i}
-            para={para}
-            number={para.kind === "factual" ? ++n : null}
-            onJump={onJump}
-          />
-        ))}
+      {/* Paperbook front matter first, in filing order. */}
+      {(draft.synopsis?.length ?? 0) > 0 && (
+        <div className="mt-4">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
+            Synopsis
+          </p>
+          <div className="mt-2">
+            <ProseSection
+              paragraphs={draft.synopsis}
+              numbered={false}
+              onJump={onJump}
+            />
+          </div>
+        </div>
+      )}
+      {(draft.list_of_dates?.length ?? 0) > 0 && (
+        <div className="mt-4">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
+            List of dates & events
+          </p>
+          <div className="mt-2">
+            <ListOfDates entries={draft.list_of_dates} onJump={onJump} />
+          </div>
+        </div>
+      )}
+
+      <div className="mt-4">
+        <ProseSection paragraphs={draft.paragraphs} numbered onJump={onJump} />
       </div>
 
       {draft.prayer.length > 0 && (
@@ -443,6 +556,13 @@ export default function DraftPanel({
           </form>
         )}
 
+        {!generating && (finished?.result?.revised ?? 0) > 0 && (
+          <span className="mt-2 mr-2 inline-block rounded-sm border border-rule bg-panel-2 px-2 py-1 text-[11px] font-medium text-ink-muted">
+            verified after {finished?.result?.revised}{" "}
+            {finished?.result?.revised === 1 ? "revision" : "revisions"}
+          </span>
+        )}
+
         {violations.length > 0 && !generating && (
           <span
             title={violations
@@ -450,8 +570,8 @@ export default function DraftPanel({
               .join("\n")}
             className="mt-2 inline-block rounded-sm border border-verify/30 bg-verify-wash px-2 py-1 text-[11px] font-medium text-verify"
           >
-            {violations.length} unverified{" "}
-            {violations.length === 1 ? "paragraph" : "paragraphs"} flagged
+            {violations.length}{" "}
+            {violations.length === 1 ? "item" : "items"} flagged against the record
           </span>
         )}
 
