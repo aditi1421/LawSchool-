@@ -1,0 +1,33 @@
+# Fly.io config for the pipeline API — Mumbai (bom): case files are
+# privileged and the DPDP Act applies, so data stays in an India region.
+#
+# Secrets expected (fly secrets set ...):
+#   DATABASE_URL            postgresql+psycopg://... (Fly Postgres, bom)
+#   AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / LAWSCHOOL_S3_ENDPOINT /
+#   LAWSCHOOL_S3_BUCKET     from `fly storage create` (Tigris)
+#   ANTHROPIC_API_KEY       required for brief/draft generation
+
+app = "lawschool-api"
+primary_region = "bom"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[deploy]
+  release_command = "alembic upgrade head"
+
+[env]
+  LAWSCHOOL_STORAGE = "s3"
+  AWS_REGION = "auto"
+  LAWSCHOOL_CORS_ORIGINS = "https://lawschool-web.fly.dev"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"
