@@ -18,7 +18,13 @@ DEFAULT_URL = "postgresql+psycopg://lawschool:lawschool@localhost:5433/lawschool
 
 
 def database_url() -> str:
-    return os.environ.get("DATABASE_URL", DEFAULT_URL)
+    url = os.environ.get("DATABASE_URL", DEFAULT_URL)
+    # Managed platforms (Fly, Heroku) hand out postgres:// URLs; SQLAlchemy
+    # needs the driver spelled out. Same database, same credentials.
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg://" + url.removeprefix(prefix)
+    return url
 
 
 @lru_cache(maxsize=1)
