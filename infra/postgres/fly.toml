@@ -1,0 +1,28 @@
+# Postgres + pgvector on Fly — the same image as local docker-compose.
+# Fly's own postgres-flex image ships without pgvector (checked: no
+# vector.so on 18.1), so we run the engine we develop against. Private
+# only: no [http_service]/[services] block means no public exposure; the
+# API reaches it at lawschool-pgdb.internal:5432. Daily volume snapshots,
+# 5-day retention. POSTGRES_PASSWORD is a Fly secret.
+
+app = "lawschool-pgdb"
+primary_region = "bom"
+
+[build]
+  image = "pgvector/pgvector:pg16"
+
+[env]
+  POSTGRES_USER = "lawschool"
+  POSTGRES_DB = "lawschool"
+  PGDATA = "/data/pgdata"
+
+[mounts]
+  source = "pgdata"
+  destination = "/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+
+[[restart]]
+  policy = "always"
